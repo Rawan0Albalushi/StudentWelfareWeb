@@ -1,0 +1,12 @@
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-6);
+  color: var(--color-text);
+}
+
+.body {
+  color: var(--color-text-muted);
+  line-height: var(--line-height-relaxed);
+  margin: 0;
+}

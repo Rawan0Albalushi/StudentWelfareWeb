@@ -1,0 +1,25 @@
+.box {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+}
+
+.message,
+.messageSuccess,
+.messageMuted,
+.messageError {
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-lg);
+}
+
+.messageSuccess {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.messageMuted {
+  color: var(--color-text-muted);
+}
+
+.messageError {
+  color: var(--color-error);
+}

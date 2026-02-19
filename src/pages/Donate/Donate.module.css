@@ -1,0 +1,118 @@
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-8);
+  color: var(--color-text);
+}
+
+.label {
+  display: block;
+  font-weight: 600;
+  margin-block-end: var(--space-2);
+  color: var(--color-text);
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-block-end: var(--space-4);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  font-family: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-block-end: var(--space-4);
+  resize: vertical;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-tint);
+}
+
+.quickAmounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-end: var(--space-6);
+}
+
+.quickBtn {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.quickBtn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-tint);
+}
+
+.quickBtn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
+  cursor: pointer;
+}
+
+.checkboxLabel input {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.submit {
+  margin-block-start: var(--space-4);
+}
+
+.formErrorWrap {
+  margin-block-end: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.formError {
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
+.select {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-block-end: var(--space-4);
+}
+
+.placeholder {
+  color: var(--color-text-muted);
+  margin: 0;
+}

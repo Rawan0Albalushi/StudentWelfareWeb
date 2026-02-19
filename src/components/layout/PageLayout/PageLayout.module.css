@@ -1,0 +1,37 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.skipLink {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  top: -100%;
+  z-index: 100;
+  padding: var(--space-2) var(--space-4);
+  background: var(--gradient-dominant);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: top var(--transition-fast);
+}
+
+.skipLink:focus {
+  top: var(--space-4);
+}
+
+.main {
+  flex: 1;
+  padding-block: var(--space-8);
+}
+
+.mainNoPadding {
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .main {
+    padding-block: var(--space-10);
+  }
+}

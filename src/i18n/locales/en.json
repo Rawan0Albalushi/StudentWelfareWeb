@@ -1,0 +1,86 @@
+{
+  "app": {
+    "name": "Student Welfare Fund",
+    "tagline": "Together for our students' care"
+  },
+  "nav": {
+    "home": "Home",
+    "campaigns": "Campaigns",
+    "programs": "Support Programs",
+    "donate": "Donate",
+    "news": "News",
+    "partners": "Partners",
+    "about": "About",
+    "login": "Login",
+    "register": "Register",
+    "profile": "My Account",
+    "myDonations": "My Donations",
+    "studentRegistration": "Student Registration",
+    "logout": "Logout"
+  },
+  "home": {
+    "heroTitle": "Student Welfare Fund",
+    "heroSubtitle": "Supporting students to complete their education",
+    "ctaDonate": "Donate Now",
+    "ctaRegister": "Student Registration",
+    "featuredCampaigns": "Featured Campaigns",
+    "urgentCampaigns": "Urgent Campaigns",
+    "recentDonations": "Recent Donations",
+    "viewAll": "View All"
+  },
+  "campaigns": {
+    "title": "Campaigns & Programs",
+    "raised": "Raised",
+    "goal": "Goal",
+    "donors": "Donors",
+    "donate": "Donate",
+    "details": "Details",
+    "noCampaigns": "No campaigns at the moment"
+  },
+  "donate": {
+    "title": "Donate",
+"amount": "Amount (OMR)",
+  "currencyShort": "OMR",
+  "quickAmounts": "Quick amounts",
+    "anonymous": "Donate anonymously",
+    "note": "Message (optional)",
+    "submit": "Proceed to payment",
+    "success": "Thank you for your donation",
+    "error": "Something went wrong, please try again"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "phone": "Phone number",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "name": "Name",
+    "email": "Email (optional)",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create account",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "otpVerify": "Enter verification code",
+    "resendOtp": "Resend code"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "close": "Close",
+    "search": "Search",
+    "language": "Language",
+    "arabic": "العربية",
+    "english": "English"
+  },
+  "footer": {
+    "about": "About",
+    "contact": "Contact",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "rights": "All rights reserved"
+  }
+}

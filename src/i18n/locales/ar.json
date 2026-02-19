@@ -1,0 +1,86 @@
+{
+  "app": {
+    "name": "صندوق رعاية الطالب الجامعي",
+    "tagline": "يداً بيد لرعاية طلابنا"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "campaigns": "الحملات",
+    "programs": "برامج الدعم",
+    "donate": "تبرع",
+    "news": "الأخبار",
+    "partners": "شركاؤنا",
+    "about": "عن الصندوق",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "profile": "حسابي",
+    "myDonations": "تبرعاتي",
+    "studentRegistration": "تسجيل طالب",
+    "logout": "تسجيل الخروج"
+  },
+  "home": {
+    "heroTitle": "صندوق رعاية الطالب الجامعي",
+    "heroSubtitle": "نساند طلابنا ليكملوا مسيرتهم التعليمية",
+    "ctaDonate": "تبرع الآن",
+    "ctaRegister": "تسجيل طالب",
+    "featuredCampaigns": "حملات مميزة",
+    "urgentCampaigns": "حملات عاجلة",
+    "recentDonations": "آخر التبرعات",
+    "viewAll": "عرض الكل"
+  },
+  "campaigns": {
+    "title": "الحملات والبرامج",
+    "raised": "تم جمعه",
+    "goal": "الهدف",
+    "donors": "متبرع",
+    "donate": "تبرع",
+    "details": "التفاصيل",
+    "noCampaigns": "لا توجد حملات حالياً"
+  },
+  "donate": {
+    "title": "التبرع",
+"amount": "المبلغ (ر.ع)",
+  "currencyShort": "ر.ع",
+  "quickAmounts": "مبالغ سريعة",
+    "anonymous": "تبرع بدون ذكر الاسم",
+    "note": "رسالة (اختياري)",
+    "submit": "متابعة للدفع",
+    "success": "شكراً لتبرعك",
+    "error": "حدث خطأ، حاول مرة أخرى"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "phone": "رقم الجوال",
+    "password": "كلمة المرور",
+    "passwordConfirm": "تأكيد كلمة المرور",
+    "name": "الاسم",
+    "email": "البريد (اختياري)",
+    "submitLogin": "دخول",
+    "submitRegister": "إنشاء الحساب",
+    "noAccount": "ليس لديك حساب؟",
+    "hasAccount": "لديك حساب؟",
+    "otpVerify": "أدخل رمز التحقق",
+    "resendOtp": "إعادة إرسال الرمز"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "back": "رجوع",
+    "close": "إغلاق",
+    "search": "بحث",
+    "language": "اللغة",
+    "arabic": "العربية",
+    "english": "English"
+  },
+  "footer": {
+    "about": "عن الصندوق",
+    "contact": "تواصل معنا",
+    "terms": "الشروط",
+    "privacy": "الخصوصية",
+    "rights": "جميع الحقوق محفوظة"
+  }
+}
