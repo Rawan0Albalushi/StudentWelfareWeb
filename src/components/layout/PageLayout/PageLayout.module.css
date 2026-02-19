@@ -24,10 +24,12 @@
 .main {
   flex: 1;
   padding-block: var(--space-8);
+  padding-block-start: calc(var(--header-height) + var(--space-8));
 }
 
 .mainNoPadding {
   flex: 1;
+  padding-block-start: 0;
 }
 
 @media (min-width: 768px) {
