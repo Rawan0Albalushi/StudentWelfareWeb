@@ -1,6 +1,8 @@
+/* Force title below header – same as auth pages */
 .wrapper {
+  margin-block-start: var(--header-height);
   text-align: center;
-  padding-block: var(--space-16);
+  padding-block: var(--space-10) var(--space-12);
 }
 
 .title {

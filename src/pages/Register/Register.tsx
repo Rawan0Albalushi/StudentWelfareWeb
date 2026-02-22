@@ -51,6 +51,7 @@ export function Register() {
   return (
     <PageLayout>
       <Container size="narrow">
+        <div className={styles.wrapper}>
         <h1 className={styles.title}>{t('auth.register')}</h1>
         <Card>
           <CardContent>
@@ -116,6 +117,7 @@ export function Register() {
             </p>
           </CardContent>
         </Card>
+        </div>
       </Container>
     </PageLayout>
   )

@@ -1,3 +1,9 @@
+/* Force title below header: extra top margin so h1 never sits under fixed header */
+.wrapper {
+  margin-block-start: var(--header-height);
+  padding-block: var(--space-10) var(--space-12);
+}
+
 .title {
   font-size: var(--text-3xl);
   font-weight: 700;

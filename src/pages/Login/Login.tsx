@@ -40,6 +40,7 @@ export function Login() {
   return (
     <PageLayout>
       <Container size="narrow">
+        <div className={styles.wrapper}>
         <h1 className={styles.title}>{t('auth.login')}</h1>
         <Card>
           <CardContent>
@@ -75,6 +76,7 @@ export function Login() {
             </p>
           </CardContent>
         </Card>
+        </div>
       </Container>
     </PageLayout>
   )

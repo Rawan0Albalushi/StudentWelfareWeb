@@ -40,11 +40,11 @@ html.dir-rtl .js-reg-card {
 }
 
 html.dir-rtl .js-hero-banner {
-  align-items: flex-end !important;
+  align-items: flex-start !important; /* RTL: start = right */
 }
 
 html.dir-rtl .js-reg-card {
-  align-items: flex-end !important;
+  align-items: flex-start !important; /* RTL: start = right */
 }
 
 html.dir-rtl .js-hero-badge,
@@ -57,7 +57,8 @@ html.dir-rtl .js-reg-card-link {
 }
 
 html.dir-rtl .js-reg-card-button {
-  flex-direction: row-reverse !important;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
 }
 
 html.dir-rtl .js-reg-card-arrow {

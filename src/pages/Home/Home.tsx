@@ -11,12 +11,19 @@ import { resolveImageUrl } from '../../config/api'
 import type { CampaignOrProgram, RecentDonation } from '../../types/api'
 import styles from './Home.module.css'
 
+const HERO_BANNERS = [
+  { id: 1, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)' },
+  { id: 2, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)' },
+  { id: 3, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)' },
+]
+
 export function Home() {
   const { t, i18n } = useTranslation('common')
   const [featured, setFeatured] = useState<CampaignOrProgram[]>([])
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(true)
   const [loadingDonations, setLoadingDonations] = useState(true)
+  const [bannerIndex, setBannerIndex] = useState(0)
 
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
   const isRtl = (i18n.language || '').startsWith('ar')
@@ -59,6 +66,14 @@ export function Home() {
     setDocumentDirection(i18n.language || 'ar')
   }, [i18n.language])
 
+  // Rotate hero banners every 5s
+  useEffect(() => {
+    const id = setInterval(() => {
+      setBannerIndex((i) => (i + 1) % HERO_BANNERS.length)
+    }, 5000)
+    return () => clearInterval(id)
+  }, [])
+
   return (
     <PageLayout noPadding>
       {/* Hero: Section 1 right = glassmorphism card; Section 2 left = creative banner with illustration; Section 3 bottom = donation strip */}
@@ -72,15 +87,15 @@ export function Home() {
         </div>
         <div className={styles.heroNoise} aria-hidden="true" />
         <Container size="wide" className={`${styles.heroContainer} js-hero-container`}>
-          <div className={`${styles.heroGrid} js-hero-grid`}>
-            {/* Section 2 (left): Creative banner – fund name, mission, illustration */}
-            <div className={`${styles.heroBanner} js-hero-banner`}>
+          <div className={`${styles.heroGrid} ${isRtl ? styles.heroGridRtl : ''} js-hero-grid`}>
+            {/* Content: title + card (right in RTL) */}
+            <div className={`${styles.heroBanner} js-hero-banner`} dir={isRtl ? 'rtl' : 'ltr'}>
               <p className={`${styles.heroBadge} js-hero-badge`}>{t('app.tagline')}</p>
               <h1 className={`${styles.heroTitle} js-hero-title`}>{t('home.heroTitle')}</h1>
               <p className={`${styles.heroSubtitle} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
               {/* بطاقة التسجيل مكان الرسم */}
               <div className={`${styles.heroCardWrap} js-hero-card-wrap`}>
-                <div className={`${styles.regCard} js-reg-card`}>
+                <div className={`${styles.regCard} js-reg-card`} dir={isRtl ? 'rtl' : 'ltr'}>
                   <span className={styles.regCardIcon} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -102,6 +117,33 @@ export function Home() {
                     {t('home.donorRegistration')}
                   </Link>
                 </div>
+              </div>
+            </div>
+
+            {/* Banners area (left in RTL – fills the empty space) */}
+            <div className={styles.heroBanners} aria-label={t('home.bannersLabel')} dir={isRtl ? 'rtl' : 'ltr'}>
+              <div className={styles.heroBannersTrack}>
+                {HERO_BANNERS.map((slide, i) => (
+                  <div
+                    key={slide.id}
+                    className={`${styles.heroBannerSlide} ${i === bannerIndex ? styles.heroBannerSlideActive : ''}`}
+                    style={{ background: slide.gradient }}
+                    aria-hidden={i !== bannerIndex}
+                  />
+                ))}
+              </div>
+              <div className={styles.heroBannersDots} role="tablist" aria-label={t('home.bannersLabel')}>
+                {HERO_BANNERS.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    role="tab"
+                    aria-selected={i === bannerIndex}
+                    aria-label={t('home.bannerSlide', { number: i + 1 })}
+                    className={`${styles.heroBannersDot} ${i === bannerIndex ? styles.heroBannersDotActive : ''}`}
+                    onClick={() => setBannerIndex(i)}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -133,7 +175,8 @@ export function Home() {
         </Container>
       </section>
 
-      {/* Featured campaigns */}
+      {/* Featured campaigns + donations: same horizontal padding as other pages */}
+      <div className={styles.pageGutter}>
       <section id="featured" className={styles.sectionCampaigns}>
         <Container size="wide">
           <div className={styles.sectionHead}>
@@ -235,6 +278,7 @@ export function Home() {
           )}
         </Container>
       </section>
+      </div>
     </PageLayout>
   )
 }

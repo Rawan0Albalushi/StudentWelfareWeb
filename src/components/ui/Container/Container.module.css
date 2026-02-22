@@ -1,13 +1,8 @@
 .container {
   width: 100%;
   margin-inline: auto;
-  padding-inline: var(--space-4);
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding-inline: var(--space-6);
-  }
+  /* Horizontal padding comes from PageLayout .main; Home uses .pageGutter for noPadding layout */
+  padding-inline: 0;
 }
 
 .narrow {

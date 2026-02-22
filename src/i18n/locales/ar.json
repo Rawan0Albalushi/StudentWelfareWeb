@@ -33,7 +33,9 @@
     "featuredCampaigns": "حملات مميزة",
     "urgentCampaigns": "حملات عاجلة",
     "recentDonations": "آخر التبرعات",
-    "viewAll": "عرض الكل"
+    "viewAll": "عرض الكل",
+    "bannersLabel": "بانرات",
+    "bannerSlide": "شريحة {{number}}"
   },
   "campaigns": {
     "title": "الحملات والبرامج",

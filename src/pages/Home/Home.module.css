@@ -2,13 +2,12 @@
 .hero {
   position: relative;
   width: 100%;
-  min-height: 88vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-inverse);
-  padding-block: var(--space-10) var(--space-14);
-  padding-block-start: calc(var(--header-height) + var(--space-6));
+  padding-block: var(--space-12) var(--space-16);
   padding-inline: var(--space-4);
   overflow: hidden;
   box-sizing: border-box;
@@ -168,54 +167,194 @@
   margin-inline: auto;
   align-items: center;
   min-width: 0;
+  margin-block-end: var(--space-12);
 }
 
-@media (min-width: 960px) {
-  .heroGrid {
-    grid-template-columns: 1fr;
-    gap: var(--space-12);
-    align-items: center;
+@media (min-width: 640px) {
+  .hero {
+    padding-inline: var(--space-6);
   }
 }
 
-/* ——— RTL (العربية): class on html so it always applies ——— */
-html.dir-rtl .hero .heroGrid {
-  direction: ltr;
+@media (min-width: 960px) {
+  .hero {
+    padding-inline: var(--space-8);
+  }
+  .heroGrid {
+    grid-template-columns: 1fr minmax(320px, 42rem);
+    gap: var(--space-2);
+    align-items: stretch;
+    direction: ltr;
+    min-height: 0;
+    margin-block-end: var(--space-14);
+  }
+  .heroGridRtl {
+    direction: rtl;
+  }
+  /* Two columns: no justify-items; RTL flips columns */
+  html.dir-rtl .hero .heroGrid,
+  .hero[dir='rtl'] .heroGrid,
+  html[dir='rtl'] .hero .heroGrid {
+    justify-items: stretch;
+    direction: rtl;
+  }
+  .hero[dir='ltr'] .heroGrid,
+  html[dir='ltr'] .hero .heroGrid {
+    direction: ltr;
+  }
+}
+
+/* ——— Hero banners (empty space area) ——— */
+.heroBanners {
+  position: relative;
+  width: 100%;
+  min-height: 260px;
+  margin-block-start: calc(-1 * var(--space-6));
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: heroContentIn 0.8s ease-out 0.2s both;
+}
+
+@media (min-width: 960px) {
+  .heroBanners {
+    min-height: 340px;
+    height: 100%;
+  }
+  .hero[dir='ltr'] .heroBanners {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+  }
+  .hero[dir='rtl'] .heroBanners {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+}
+
+.heroBannersTrack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+.heroBannerSlide {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transform: scale(1.02);
+  transition: opacity 0.8s ease-out, transform 8s ease-out;
+  pointer-events: none;
+}
+
+.heroBannerSlideActive {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+  animation: heroBannerSlideSoft 12s ease-in-out infinite;
+}
+
+@keyframes heroBannerSlideSoft {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.heroBannersDots {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  gap: var(--space-2);
+}
+
+.heroBannersDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.2s ease;
+}
+
+.heroBannersDot:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.heroBannersDotActive {
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.2);
+}
+
+/* ——— RTL (العربية): class on html + dir on section/banner/card ——— */
+/* Single column only: push content to the right in RTL */
+@media (max-width: 959px) {
+  html.dir-rtl .hero .heroGrid,
+  .hero[dir='rtl'] .heroGrid,
+  html[dir='rtl'] .hero .heroGrid {
+    direction: ltr;
+    justify-items: end;
+  }
 }
 
 html.dir-rtl .hero,
 html.dir-rtl .hero .heroContainer,
 html.dir-rtl .hero .heroBanner,
 html.dir-rtl .hero .heroCardWrap,
-html.dir-rtl .hero .regCard {
+html.dir-rtl .hero .regCard,
+.hero[dir='rtl'],
+.hero[dir='rtl'] .heroContainer,
+.hero[dir='rtl'] .heroBanner,
+.hero[dir='rtl'] .heroCardWrap,
+.hero[dir='rtl'] .regCard {
   direction: rtl !important;
   text-align: right !important;
 }
 
-html.dir-rtl .hero .heroBanner {
-  align-items: flex-end !important;
+/* Banner: content on the right (RTL start = right) */
+html.dir-rtl .hero .heroBanner,
+.heroBanner[dir='rtl'],
+.hero[dir='rtl'] .heroBanner {
+  align-items: flex-start !important;
   text-align: right !important;
+  max-inline-size: 42rem;
 }
 
-html.dir-rtl .hero .regCard {
-  align-items: flex-end !important;
+html.dir-rtl .hero .regCard,
+.regCard[dir='rtl'],
+.hero[dir='rtl'] .regCard {
+  align-items: flex-start !important; /* RTL: start = right */
 }
 
-/* fallback: dir attribute */
-.hero[dir='rtl'] .heroGrid,
-html[dir='rtl'] .hero .heroGrid {
-  direction: ltr;
+/* fallback: dir attribute — single column only */
+@media (max-width: 959px) {
+  .hero[dir='rtl'] .heroGrid,
+  html[dir='rtl'] .hero .heroGrid {
+    direction: ltr;
+    justify-items: end;
+  }
 }
 
 .hero[dir='rtl'],
 .hero[dir='rtl'] .heroContainer,
 .hero[dir='rtl'] .heroBanner,
 .hero[dir='rtl'] .heroCardWrap,
+.hero[dir='rtl'] .heroBanners,
 .hero[dir='rtl'] .regCard,
 html[dir='rtl'] .hero,
 html[dir='rtl'] .hero .heroContainer,
 html[dir='rtl'] .hero .heroBanner,
 html[dir='rtl'] .hero .heroCardWrap,
+html[dir='rtl'] .hero .heroBanners,
 html[dir='rtl'] .hero .regCard {
   direction: rtl;
   text-align: right;
@@ -224,11 +363,12 @@ html[dir='rtl'] .hero .regCard {
 .hero[dir='rtl'] .heroBanner,
 html[dir='rtl'] .hero .heroBanner {
   align-items: flex-end;
+  max-inline-size: 42rem;
 }
 
 .hero[dir='rtl'] .regCard,
 html[dir='rtl'] .hero .regCard {
-  align-items: flex-end;
+  align-items: flex-start; /* RTL: start = right */
 }
 
 /* ——— LTR (English) ——— */
@@ -236,11 +376,13 @@ html[dir='rtl'] .hero .regCard {
 .hero[dir='ltr'] .heroContainer,
 .hero[dir='ltr'] .heroBanner,
 .hero[dir='ltr'] .heroCardWrap,
+.hero[dir='ltr'] .heroBanners,
 .hero[dir='ltr'] .regCard,
 html[dir='ltr'] .hero,
 html[dir='ltr'] .hero .heroContainer,
 html[dir='ltr'] .hero .heroBanner,
 html[dir='ltr'] .hero .heroCardWrap,
+html[dir='ltr'] .hero .heroBanners,
 html[dir='ltr'] .hero .regCard {
   direction: ltr;
   text-align: left;
@@ -278,9 +420,11 @@ html[dir='ltr'] .hero .regCard {
 }
 
 @media (min-width: 960px) {
-  html.dir-rtl .hero .heroBanner {
+  html.dir-rtl .hero .heroBanner,
+  .heroBanner[dir='rtl'],
+  .hero[dir='rtl'] .heroBanner {
     text-align: end !important;
-    align-items: flex-end !important;
+    align-items: flex-start !important; /* RTL: start = right */
   }
 
   .hero[dir='ltr'] .heroBanner,
@@ -288,17 +432,12 @@ html[dir='ltr'] .hero .regCard {
     text-align: start;
     align-items: flex-start;
   }
-
-  .hero[dir='rtl'] .heroBanner,
-  html[dir='rtl'] .hero .heroBanner {
-    text-align: end;
-    align-items: flex-end;
-  }
 }
 
 html.dir-rtl .hero .heroBanner .heroBadge,
 html.dir-rtl .hero .heroBanner .heroTitle,
 html.dir-rtl .hero .heroBanner .heroSubtitle {
+  direction: rtl !important;
   text-align: right !important;
 }
 
@@ -308,6 +447,7 @@ html.dir-rtl .hero .heroBanner .heroSubtitle {
 html[dir='rtl'] .hero .heroBanner .heroBadge,
 html[dir='rtl'] .hero .heroBanner .heroTitle,
 html[dir='rtl'] .hero .heroBanner .heroSubtitle {
+  direction: rtl;
   text-align: right;
 }
 
@@ -515,16 +655,18 @@ html[dir='ltr'] .hero .regCardDesc {
   text-align: left;
 }
 
+html.dir-rtl .hero .regCardIcon,
 html.dir-rtl .hero .regCardTitle,
-html.dir-rtl .hero .regCardDesc {
-  text-align: right !important;
-}
-
+html.dir-rtl .hero .regCardDesc,
+.regCard[dir='rtl'] .regCardIcon,
+.regCard[dir='rtl'] .regCardTitle,
+.regCard[dir='rtl'] .regCardDesc,
 .hero[dir='rtl'] .regCardTitle,
 .hero[dir='rtl'] .regCardDesc,
 html[dir='rtl'] .hero .regCardTitle,
 html[dir='rtl'] .hero .regCardDesc {
-  text-align: right;
+  direction: rtl !important;
+  text-align: right !important;
 }
 
 .regCardDesc {
@@ -563,13 +705,13 @@ html[dir='ltr'] .hero .regCardButton {
   flex-direction: row;
 }
 
-html.dir-rtl .hero .regCardButton {
-  flex-direction: row-reverse !important;
-}
-
+/* RTL: row + flex-start so text and arrow sit on the right; arrow scaleX(-1) points left */
+html.dir-rtl .hero .regCardButton,
+.regCard[dir='rtl'] .regCardButton,
 .hero[dir='rtl'] .regCardButton,
 html[dir='rtl'] .hero .regCardButton {
-  flex-direction: row-reverse;
+  flex-direction: row !important;
+  justify-content: flex-start !important;
 }
 
 .regCardButton:hover {
@@ -581,10 +723,8 @@ html[dir='rtl'] .hero .regCardButton {
   transition: transform var(--transition-fast);
 }
 
-html.dir-rtl .hero .regCardArrow {
-  transform: scaleX(-1);
-}
-
+html.dir-rtl .hero .regCardArrow,
+.regCard[dir='rtl'] .regCardArrow,
 .hero[dir='rtl'] .regCardArrow,
 html[dir='rtl'] .hero .regCardArrow {
   transform: scaleX(-1);
@@ -594,10 +734,8 @@ html[dir='rtl'] .hero .regCardArrow {
   transform: translateX(4px);
 }
 
-html.dir-rtl .hero .regCardButton:hover .regCardArrow {
-  transform: scaleX(-1) translateX(-4px);
-}
-
+html.dir-rtl .hero .regCardButton:hover .regCardArrow,
+.regCard[dir='rtl'] .regCardButton:hover .regCardArrow,
 .hero[dir='rtl'] .regCardButton:hover .regCardArrow,
 html[dir='rtl'] .hero .regCardButton:hover .regCardArrow {
   transform: scaleX(-1) translateX(-4px);
@@ -620,13 +758,11 @@ html[dir='ltr'] .hero .regCardSecondaryLink {
   text-align: left;
 }
 
-html.dir-rtl .hero .regCardSecondaryLink {
-  text-align: right !important;
-}
-
+html.dir-rtl .hero .regCardSecondaryLink,
+.regCard[dir='rtl'] .regCardSecondaryLink,
 .hero[dir='rtl'] .regCardSecondaryLink,
 html[dir='rtl'] .hero .regCardSecondaryLink {
-  text-align: right;
+  text-align: right !important;
 }
 
 .regCardSecondaryLink:hover {
@@ -636,7 +772,7 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
 /* Section 3 (bottom): Full-width motivational donation strip */
 .donationStrip {
   width: 100%;
-  margin-block-start: var(--space-10);
+  margin-block-start: var(--space-12);
   padding: var(--space-8) var(--space-6);
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(16px);
@@ -938,6 +1074,23 @@ html[dir='rtl'] .hero .donationStripSubtext {
 }
 
 /* ========== Featured campaigns ========== */
+/* Same horizontal padding as PageLayout .main for noPadding layout */
+.pageGutter {
+  padding-inline: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .pageGutter {
+    padding-inline: var(--space-6);
+  }
+}
+
+@media (min-width: 960px) {
+  .pageGutter {
+    padding-inline: var(--space-8);
+  }
+}
+
 .sectionCampaigns {
   padding-block: var(--space-16) var(--space-20);
   background: var(--color-bg);

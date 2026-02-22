@@ -33,7 +33,9 @@
     "featuredCampaigns": "Featured Campaigns",
     "urgentCampaigns": "Urgent Campaigns",
     "recentDonations": "Recent Donations",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "bannersLabel": "Banners",
+    "bannerSlide": "Slide {{number}}"
   },
   "campaigns": {
     "title": "Campaigns & Programs",
