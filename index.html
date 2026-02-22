@@ -12,6 +12,17 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      (function() {
+        var locale = localStorage.getItem('locale') || localStorage.getItem('i18nextLng') || 'ar';
+        var dir = locale.startsWith('ar') ? 'rtl' : 'ltr';
+        var el = document.documentElement;
+        el.setAttribute('dir', dir);
+        el.setAttribute('lang', locale.startsWith('ar') ? 'ar' : 'en');
+        el.classList.remove('dir-ltr', 'dir-rtl');
+        el.classList.add(dir === 'rtl' ? 'dir-rtl' : 'dir-ltr');
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

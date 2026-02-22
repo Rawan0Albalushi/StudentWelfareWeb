@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
@@ -13,6 +13,8 @@ export function Login() {
   const { t } = useTranslation('common')
   const { login, loading } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const returnUrl = searchParams.get('returnUrl') || '/'
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -26,7 +28,7 @@ export function Login() {
     }
     try {
       await login(phone.trim(), password)
-      navigate('/', { replace: true })
+      navigate(returnUrl, { replace: true })
     } catch (err) {
       const msg = err instanceof ApiError && err.data && typeof err.data === 'object' && (err.data as { message?: string }).message
         ? (err.data as { message: string }).message

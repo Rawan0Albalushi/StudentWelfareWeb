@@ -12,13 +12,70 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
-/* dir set by JS from i18n language */
-[dir='rtl'] {
-  text-align: right;
+/* RTL/LTR: use class so it always wins; set by setDocumentDirection() and index.html script */
+html.dir-rtl {
+  direction: rtl !important;
+  text-align: right !important;
 }
 
-[dir='ltr'] {
-  text-align: left;
+html.dir-rtl body,
+html.dir-rtl #root {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+html.dir-ltr {
+  direction: ltr !important;
+  text-align: left !important;
+}
+
+/* RTL hero & card: stable classes so these rules always apply (no CSS modules) */
+html.dir-rtl .js-hero,
+html.dir-rtl .js-hero-container,
+html.dir-rtl .js-hero-banner,
+html.dir-rtl .js-hero-card-wrap,
+html.dir-rtl .js-reg-card {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+html.dir-rtl .js-hero-banner {
+  align-items: flex-end !important;
+}
+
+html.dir-rtl .js-reg-card {
+  align-items: flex-end !important;
+}
+
+html.dir-rtl .js-hero-badge,
+html.dir-rtl .js-hero-title,
+html.dir-rtl .js-hero-subtitle,
+html.dir-rtl .js-reg-card-title,
+html.dir-rtl .js-reg-card-desc,
+html.dir-rtl .js-reg-card-link {
+  text-align: right !important;
+}
+
+html.dir-rtl .js-reg-card-button {
+  flex-direction: row-reverse !important;
+}
+
+html.dir-rtl .js-reg-card-arrow {
+  transform: scaleX(-1);
+}
+
+html.dir-rtl .js-reg-card-button:hover .js-reg-card-arrow {
+  transform: scaleX(-1) translateX(-4px);
+}
+
+html.dir-rtl .js-donation-strip,
+html.dir-rtl .js-donation-strip-content {
+  direction: rtl !important;
+}
+
+html.dir-rtl .js-donation-heading,
+html.dir-rtl .js-donation-subtext {
+  text-align: right !important;
 }
 
 body {

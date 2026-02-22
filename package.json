@@ -1,8 +1,11 @@
 {
-  "name": "student-care-web",
+  "name": "student-welfare-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "overrides": {
+    "minimatch": ">=10.2.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

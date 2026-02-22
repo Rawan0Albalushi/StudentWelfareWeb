@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import { setDocumentDirection } from '../../i18n/config'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
-import { Card, CardContent, CardFooter } from '../../components/ui/Card'
 import { campaignService } from '../../services/campaignService'
 import { donationService } from '../../services/donationService'
 import { resolveImageUrl } from '../../config/api'
@@ -19,6 +19,7 @@ export function Home() {
   const [loadingDonations, setLoadingDonations] = useState(true)
 
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
+  const isRtl = (i18n.language || '').startsWith('ar')
   const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
   const getTitle = (item: CampaignOrProgram) =>
     (item[titleKey as keyof CampaignOrProgram] as string) || item.title || `#${item.id}`
@@ -33,13 +34,11 @@ export function Home() {
     let cancelled = false
     campaignService
       .getCampaignsFeatured()
-      .then((list) => {
-        if (!cancelled) setFeatured(list)
+      .then((list) => { if (!cancelled) setFeatured(list) })
+      .catch((err) => {
+        if (!cancelled) console.error('[Home] campaigns/featured failed:', err)
       })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setLoadingCampaigns(false)
-      })
+      .finally(() => { if (!cancelled) setLoadingCampaigns(false) })
     return () => { cancelled = true }
   }, [])
 
@@ -47,41 +46,90 @@ export function Home() {
     let cancelled = false
     donationService
       .getRecent(5)
-      .then((list) => {
-        if (!cancelled) setRecentDonations(list)
+      .then((list) => { if (!cancelled) setRecentDonations(list) })
+      .catch((err) => {
+        if (!cancelled) console.error('[Home] donations/recent failed:', err)
       })
-      .catch(() => {})
-      .finally(() => {
-        if (!cancelled) setLoadingDonations(false)
-      })
+      .finally(() => { if (!cancelled) setLoadingDonations(false) })
     return () => { cancelled = true }
   }, [])
 
+  // Keep document RTL/LTR in sync when this page is shown (e.g. after language switch)
+  useEffect(() => {
+    setDocumentDirection(i18n.language || 'ar')
+  }, [i18n.language])
+
   return (
     <PageLayout noPadding>
-      {/* Hero */}
-      <section className={styles.hero} aria-label="Hero">
+      {/* Hero: Section 1 right = glassmorphism card; Section 2 left = creative banner with illustration; Section 3 bottom = donation strip */}
+      <section className={`${styles.hero} js-hero`} aria-label="Hero" dir={isRtl ? 'rtl' : 'ltr'} lang={i18n.language || 'ar'}>
         <div className={styles.heroBg} />
-        <div className={styles.heroShapes} aria-hidden="true" />
-        <Container size="content" className={styles.heroInner}>
-          <p className={styles.heroBadge}>{t('app.tagline')}</p>
-          <h1 className={styles.heroTitle}>{t('home.heroTitle')}</h1>
-          <p className={styles.heroSubtitle}>{t('home.heroSubtitle')}</p>
-          <div className={styles.heroActions}>
-            <Link to="/donate">
-              <Button size="lg" className={styles.heroCtaPrimary}>
-                {t('home.ctaDonate')}
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="outline" size="lg" className={styles.heroCtaSecondary}>
-                {t('home.ctaRegister')}
-              </Button>
-            </Link>
+        <div className={styles.heroShapes} aria-hidden="true">
+          <span className={styles.heroShape} data-shape="1" />
+          <span className={styles.heroShape} data-shape="2" />
+          <span className={styles.heroShape} data-shape="3" />
+          <span className={styles.heroShape} data-shape="4" />
+        </div>
+        <div className={styles.heroNoise} aria-hidden="true" />
+        <Container size="wide" className={`${styles.heroContainer} js-hero-container`}>
+          <div className={`${styles.heroGrid} js-hero-grid`}>
+            {/* Section 2 (left): Creative banner – fund name, mission, illustration */}
+            <div className={`${styles.heroBanner} js-hero-banner`}>
+              <p className={`${styles.heroBadge} js-hero-badge`}>{t('app.tagline')}</p>
+              <h1 className={`${styles.heroTitle} js-hero-title`}>{t('home.heroTitle')}</h1>
+              <p className={`${styles.heroSubtitle} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
+              {/* بطاقة التسجيل مكان الرسم */}
+              <div className={`${styles.heroCardWrap} js-hero-card-wrap`}>
+                <div className={`${styles.regCard} js-reg-card`}>
+                  <span className={styles.regCardIcon} aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  </span>
+                  <h3 className={`${styles.regCardTitle} js-reg-card-title`}>{t('home.ctaRegister')}</h3>
+                  <p className={`${styles.regCardDesc} js-reg-card-desc`}>
+                    {lang === 'ar'
+                      ? 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
+                      : 'Register your application for student support programs. Complete your details and upload required documents.'}
+                  </p>
+<Link to="/student-registration" className={`${styles.regCardButton} js-reg-card-button`}>
+                    {t('home.ctaStartRegistration')}
+                    <span className={`${styles.regCardArrow} js-reg-card-arrow`} aria-hidden="true">→</span>
+                  </Link>
+                <Link to="/register" className={`${styles.regCardSecondaryLink} js-reg-card-link`}>
+                    {t('home.donorRegistration')}
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-          <a href="#featured" className={styles.heroScroll} aria-label="Scroll to campaigns">
-            <span className={styles.heroScrollDot} />
-          </a>
+
+          {/* Section 3 (bottom): Full-width motivational donation strip */}
+          <div className={`${styles.donationStrip} js-donation-strip`}>
+            <div className={`${styles.donationStripContent} js-donation-strip-content`}>
+              <h2 className={`${styles.donationStripHeading} js-donation-heading`}>{t('home.donationStripHeading')}</h2>
+              <p className={`${styles.donationStripSubtext} js-donation-subtext`}>{t('home.donationStripSubtext')}</p>
+              <div className={styles.donationStripStats}>
+                <div className={styles.donationStripStat}>
+                  <span className={styles.donationStripStatValue}>500+</span>
+                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat1')}</span>
+                </div>
+                <div className={styles.donationStripStat}>
+                  <span className={styles.donationStripStatValue}>1M+</span>
+                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat2')}</span>
+                </div>
+                <div className={styles.donationStripStat}>
+                  <span className={styles.donationStripStatValue}>2K+</span>
+                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat3')}</span>
+                </div>
+              </div>
+              <Link to="/donate" className={styles.donationStripCta}>
+                {t('home.ctaDonate')}
+              </Link>
+            </div>
+          </div>
         </Container>
       </section>
 

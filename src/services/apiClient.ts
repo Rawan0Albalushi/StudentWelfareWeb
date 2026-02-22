@@ -46,7 +46,14 @@ async function request(
     res = await fetch(url.toString(), { ...init, headers })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
+    console.error('[API] Network error:', url.toString(), msg)
     throw new ApiError(0, { message: `اتصال الشبكة فشل: ${msg}` })
+  }
+  if (!res.ok) {
+    const clone = res.clone()
+    parseJson<unknown>(clone).then((body) => {
+      console.error('[API] Error response:', res.status, url.toString(), body)
+    }).catch(() => console.error('[API] Error response:', res.status, url.toString(), '(non-JSON body)'))
   }
   if (res.status === 401) {
     clearToken()

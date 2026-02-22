@@ -1,0 +1,20 @@
+.wrapper {
+  text-align: center;
+  padding-block: var(--space-16);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  color: var(--color-text);
+  margin: 0 0 var(--space-6);
+}
+
+.intro {
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-10);
+  max-inline-size: 36rem;
+  margin-inline: auto;
+}

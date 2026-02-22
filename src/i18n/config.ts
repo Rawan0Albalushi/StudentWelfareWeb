@@ -25,9 +25,23 @@ i18n
       lookupLocalStorage: 'locale',
     },
   })
+  .then(() => {
+    setDocumentDirection(i18n.language || 'ar')
+  })
 
 export function getDir(lng: string): 'rtl' | 'ltr' {
-  return lng === 'ar' ? 'rtl' : 'ltr'
+  return lng.startsWith('ar') ? 'rtl' : 'ltr'
+}
+
+/** Set document direction and lang; also toggles html class for reliable RTL/LTR in CSS */
+export function setDocumentDirection(lng: string): void {
+  if (typeof document === 'undefined' || !document.documentElement) return
+  const dir = getDir(lng)
+  const lang = lng.startsWith('ar') ? 'ar' : 'en'
+  document.documentElement.setAttribute('dir', dir)
+  document.documentElement.setAttribute('lang', lang)
+  document.documentElement.classList.remove('dir-ltr', 'dir-rtl')
+  document.documentElement.classList.add(dir === 'rtl' ? 'dir-rtl' : 'dir-ltr')
 }
 
 export default i18n

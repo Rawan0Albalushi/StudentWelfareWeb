@@ -5,7 +5,7 @@ import { Container } from '../../ui/Container'
 import { Button } from '../../ui/Button'
 import { LanguageSwitcher } from '../../LanguageSwitcher'
 import { useAuth } from '../../../context/AuthContext'
-import { getDir } from '../../../i18n/config'
+import { setDocumentDirection } from '../../../i18n/config'
 import styles from './Header.module.css'
 
 export function Header() {
@@ -76,9 +76,8 @@ export function Header() {
             <LanguageSwitcher
               value={i18n.language}
               onChange={(lng) => {
+                setDocumentDirection(lng)
                 i18n.changeLanguage(lng)
-                document.documentElement.setAttribute('dir', getDir(lng))
-                document.documentElement.setAttribute('lang', lng)
               }}
             />
             {isAuthenticated && user ? (

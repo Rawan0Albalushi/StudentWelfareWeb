@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { getDir } from './i18n/config'
+import { setDocumentDirection } from './i18n/config'
 import { AuthProvider } from './context/AuthContext'
 import { AuthRedirectEffect } from './components/AuthRedirectEffect'
 import { Home } from './pages/Home'
@@ -15,14 +15,12 @@ import { About } from './pages/About'
 import { Profile } from './pages/Profile'
 import { MyDonations } from './pages/MyDonations'
 import { PaymentReturn } from './pages/PaymentReturn'
+import { StudentRegistration } from './pages/StudentRegistration'
 
 function DirSync() {
   const { i18n } = useTranslation()
   useEffect(() => {
-    const dir = getDir(i18n.language)
-    const lang = i18n.language
-    document.documentElement.setAttribute('dir', dir)
-    document.documentElement.setAttribute('lang', lang)
+    setDocumentDirection(i18n.language || 'ar')
   }, [i18n.language])
   return null
 }
@@ -40,6 +38,7 @@ function App() {
           <Route path="/donate/return" element={<PaymentReturn />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/student-registration" element={<StudentRegistration />} />
           <Route path="/news" element={<News />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/about" element={<About />} />
