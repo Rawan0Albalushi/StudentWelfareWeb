@@ -17,7 +17,7 @@ const FALLBACK_QUICK_AMOUNTS = [10, 25, 50, 100, 200, 500]
 
 export function Donate() {
   const { t, i18n } = useTranslation('common')
-  const { isAuthenticated, refreshProfile } = useAuth()
+  const { isAuthenticated, user, refreshProfile } = useAuth()
   const [searchParams] = useSearchParams()
   const campaignIdParam = searchParams.get('campaign_id')
   const programIdParam = searchParams.get('program_id')
@@ -94,13 +94,16 @@ export function Donate() {
     setSubmitting(true)
     try {
       const returnOrigin = typeof window !== 'undefined' ? window.location.origin : ''
+      const phoneForDonation = isAuthenticated && user?.phone
+        ? user.phone.trim()
+        : donorPhone.trim()
       const body = {
         amount: numAmount,
         is_anonymous: anonymous,
         note: note.trim() || undefined,
         message: note.trim() || undefined,
         return_origin: returnOrigin,
-        ...(donorPhone.trim() ? { donor_phone: donorPhone.trim() } : {}),
+        ...(phoneForDonation ? { donor_phone: phoneForDonation } : {}),
         ...(selectedType === 'campaign' && id ? { campaign_id: id } : {}),
         ...(selectedType === 'program' && id ? { program_id: id } : {}),
       }
@@ -225,17 +228,19 @@ export function Donate() {
                 disabled={submitting}
               />
             </label>
-            <label className={styles.label}>
-              {t('donate.phone')}
-              <input
-                type="tel"
-                className={styles.input}
-                value={donorPhone}
-                onChange={(e) => setDonorPhone(e.target.value)}
-                placeholder={t('donate.phonePlaceholder')}
-                disabled={submitting}
-              />
-            </label>
+            {!isAuthenticated && (
+              <label className={styles.label}>
+                {t('donate.phone')}
+                <input
+                  type="tel"
+                  className={styles.input}
+                  value={donorPhone}
+                  onChange={(e) => setDonorPhone(e.target.value)}
+                  placeholder={t('donate.phonePlaceholder')}
+                  disabled={submitting}
+                />
+              </label>
+            )}
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"

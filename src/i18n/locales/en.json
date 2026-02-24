@@ -40,12 +40,14 @@
   },
   "campaigns": {
     "title": "Campaigns & Programs",
+    "subtitle": "Support our campaigns and programs to make a lasting impact on students.",
     "raised": "Raised",
     "goal": "Goal",
     "donors": "Donors",
     "donate": "Donate",
     "details": "Details",
-    "noCampaigns": "No campaigns at the moment"
+    "noCampaigns": "No campaigns at the moment",
+    "noCampaignsDescription": "Check back later for new campaigns and programs to support."
   },
   "donate": {
     "title": "Donate",
@@ -61,6 +63,53 @@
     "successSubtext": "Your donation has been received and will support students",
     "error": "Something went wrong, please try again",
     "paymentCancelled": "Payment was cancelled"
+  },
+  "myDonations": {
+    "title": "My Donations",
+    "subtitle": "View your total donations and donation history",
+    "totalDonated": "Total donated",
+    "donationCount": "Donation count",
+    "donationsListTitle": "Donation history",
+    "emptyTitle": "No donations yet",
+    "emptyDescription": "When you make a donation, it will appear here.",
+    "ctaDonate": "Donate now",
+    "donationDate": "Date",
+    "amount": "Amount",
+    "sourceWeb": "Web",
+    "sourceApp": "App"
+  },
+  "news": {
+    "subtitle": "Latest news and updates from the Student Welfare Fund",
+    "noNews": "No news yet",
+    "noNewsDescription": "Check back later for updates from the fund.",
+    "featured": "Featured"
+  },
+  "partners": {
+    "subtitle": "Our partners in supporting students and their education",
+    "noPartners": "No partners at the moment",
+    "noPartnersDescription": "We are adding our partners soon.",
+    "visitWebsite": "Visit website",
+    "featured": "Featured partner"
+  },
+  "about": {
+    "subtitle": "Learn about the Student Welfare Fund and our mission to support education",
+    "intro": "The Student Welfare Fund is a national initiative that supports students in need to complete their education. Through generous donations and partnerships we work hand in hand to ease financial burden and empower students to achieve their aspirations.",
+    "missionTitle": "Our Mission",
+    "missionText": "To provide financial and moral support to university students in need so they can continue and complete their studies, based on our belief that education is a right for all.",
+    "visionTitle": "Our Vision",
+    "visionText": "An equitable educational community where every student can pursue their education without financial barriers, and our students are the leaders of tomorrow.",
+    "valuesTitle": "Our Values",
+    "value1Title": "Transparency",
+    "value1Text": "We are committed to disclosing how donations are used and the results of our programs to build trust with donors and the community.",
+    "value2Title": "Solidarity",
+    "value2Text": "We believe that supporting students is a shared responsibility between individuals and institutions for lasting impact.",
+    "value3Title": "Empowerment",
+    "value3Text": "We aim to empower students to complete their education, not just provide temporary assistance.",
+    "value4Title": "Partnership",
+    "value4Text": "We work with supporting institutions and partners to expand the scope of care and increase impact.",
+    "ctaTitle": "Help us change students' lives",
+    "ctaSubtext": "Every donation counts — join thousands of donors supporting student education.",
+    "ctaButton": "Donate now"
   },
   "auth": {
     "login": "Login",

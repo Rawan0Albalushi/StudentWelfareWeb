@@ -22,7 +22,9 @@ export function Header() {
   const navItems = [
     { to: '/', label: t('nav.home') },
     { to: '/campaigns', label: t('nav.campaigns') },
-    { to: '/donate', label: t('nav.donate') },
+    ...(isAuthenticated
+      ? [{ to: '/my-donations', label: t('nav.myDonations') }]
+      : [{ to: '/donate', label: t('nav.donate') }]),
     { to: '/news', label: t('nav.news') },
     { to: '/partners', label: t('nav.partners') },
     { to: '/about', label: t('nav.about') },
