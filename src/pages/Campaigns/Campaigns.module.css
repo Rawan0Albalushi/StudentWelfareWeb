@@ -1,8 +1,15 @@
+/* Wrapper for grid; top offset comes from PageLayout .mainInner */
+.pageWrap {
+  padding-block-end: var(--space-8);
+  min-block-size: 50vh;
+}
+
 .title {
   font-size: var(--text-3xl);
   font-weight: 700;
   margin: 0 0 var(--space-6);
   color: var(--color-text);
+  scroll-margin-block-start: var(--header-height);
 }
 
 .placeholder {

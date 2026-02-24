@@ -17,7 +17,7 @@ export function PageLayout({ children, noPadding = false }: PageLayoutProps) {
       </a>
       <Header />
       <main id="main" className={noPadding ? styles.mainNoPadding : styles.main} role="main">
-        {children}
+        {noPadding ? children : <div className={styles.mainInner}>{children}</div>}
       </main>
       <Footer />
     </div>

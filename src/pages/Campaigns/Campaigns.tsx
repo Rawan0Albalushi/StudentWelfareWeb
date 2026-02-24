@@ -40,8 +40,9 @@ export function Campaigns() {
 
   return (
     <PageLayout>
-      <Container size="wide">
-        <h1 className={styles.title}>{t('campaigns.title')}</h1>
+      <div className={styles.pageWrap}>
+        <Container size="wide">
+          <h1 className={styles.title}>{t('campaigns.title')}</h1>
         {loading ? (
           <p className={styles.placeholder}>{t('common.loading')}</p>
         ) : all.length === 0 ? (
@@ -76,7 +77,8 @@ export function Campaigns() {
             ))}
           </div>
         )}
-      </Container>
+        </Container>
+      </div>
     </PageLayout>
   )
 }

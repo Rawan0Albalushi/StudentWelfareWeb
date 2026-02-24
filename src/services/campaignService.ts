@@ -27,6 +27,60 @@ export const campaignService = {
     return unwrapList<CampaignOrProgram>(data)
   },
 
+  /**
+   * Charity campaigns for home screen (matches mobile app).
+   * Tries GET /campaigns first, then GET /charity-campaigns on failure.
+   * Query params: page (from 1), limit, per_page.
+   */
+  async getCharityCampaigns(params?: { page?: number; limit?: number; per_page?: number }): Promise<CampaignOrProgram[]> {
+    const q = (params ?? {}) as Record<string, number>
+    try {
+      const data = await api.get<unknown>('/campaigns', q)
+      return unwrapList<CampaignOrProgram>(data)
+    } catch {
+      const data = await api.get<unknown>('/charity-campaigns', q)
+      return unwrapList<CampaignOrProgram>(data)
+    }
+  },
+
+  /** Fetches all campaigns by requesting all pages (tries /campaigns first, then /charity-campaigns like mobile). */
+  async getAllCampaigns(): Promise<CampaignOrProgram[]> {
+    const perPage = 100
+    const params = { page: 1, per_page: perPage, limit: perPage }
+    let list: CampaignOrProgram[]
+    let raw: { data?: CampaignOrProgram[]; meta?: { last_page?: number; total?: number } }
+    let path: '/campaigns' | '/charity-campaigns'
+    try {
+      const first = await api.get<unknown>('/campaigns', params)
+      raw = first as { data?: CampaignOrProgram[]; meta?: { last_page?: number; total?: number } }
+      list = unwrapList<CampaignOrProgram>(first)
+      path = '/campaigns'
+    } catch {
+      const first = await api.get<unknown>('/charity-campaigns', params)
+      raw = first as { data?: CampaignOrProgram[]; meta?: { last_page?: number; total?: number } }
+      list = unwrapList<CampaignOrProgram>(first)
+      path = '/charity-campaigns'
+    }
+    const lastPage = raw?.meta?.last_page
+    if (lastPage != null && lastPage > 1) {
+      for (let page = 2; page <= lastPage; page++) {
+        const data = await api.get<unknown>(path, { page, per_page: perPage, limit: perPage })
+        list.push(...unwrapList<CampaignOrProgram>(data))
+      }
+      return list
+    }
+    let page = 2
+    while (true) {
+      const data = await api.get<unknown>(path, { page, per_page: perPage, limit: perPage })
+      const chunk = unwrapList<CampaignOrProgram>(data)
+      if (chunk.length === 0) break
+      list.push(...chunk)
+      if (chunk.length < perPage) break
+      page++
+    }
+    return list
+  },
+
   async getCampaignsFeatured(): Promise<CampaignOrProgram[]> {
     const data = await api.get<unknown>('/campaigns/featured')
     return unwrapList<CampaignOrProgram>(data)

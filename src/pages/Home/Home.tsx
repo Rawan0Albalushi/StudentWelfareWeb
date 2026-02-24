@@ -19,7 +19,7 @@ const HERO_BANNERS = [
 
 export function Home() {
   const { t, i18n } = useTranslation('common')
-  const [featured, setFeatured] = useState<CampaignOrProgram[]>([])
+  const [campaigns, setCampaigns] = useState<CampaignOrProgram[]>([])
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(true)
   const [loadingDonations, setLoadingDonations] = useState(true)
@@ -40,10 +40,10 @@ export function Home() {
   useEffect(() => {
     let cancelled = false
     campaignService
-      .getCampaignsFeatured()
-      .then((list) => { if (!cancelled) setFeatured(list) })
+      .getAllCampaigns()
+      .then((list) => { if (!cancelled) setCampaigns(list) })
       .catch((err) => {
-        if (!cancelled) console.error('[Home] campaigns/featured failed:', err)
+        if (!cancelled) console.error('[Home] campaigns failed:', err)
       })
       .finally(() => { if (!cancelled) setLoadingCampaigns(false) })
     return () => { cancelled = true }
@@ -76,9 +76,29 @@ export function Home() {
 
   return (
     <PageLayout noPadding>
-      {/* Hero: Section 1 right = glassmorphism card; Section 2 left = creative banner with illustration; Section 3 bottom = donation strip */}
+      {/* Hero: Section 1 = glassmorphism card; Section 2 = creative banner with illustration */}
       <section className={`${styles.hero} js-hero`} aria-label="Hero" dir={isRtl ? 'rtl' : 'ltr'} lang={i18n.language || 'ar'}>
         <div className={styles.heroBg} />
+        {/* لمعة متحركة */}
+        <div className={styles.heroShine} aria-hidden="true" />
+        {/* أيقونات زينة في الخلفية */}
+        <div className={styles.heroBgIcons} aria-hidden="true">
+          <span className={styles.heroBgIcon} data-icon="heart">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+          </span>
+          <span className={styles.heroBgIcon} data-icon="graduation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" /></svg>
+          </span>
+          <span className={styles.heroBgIcon} data-icon="book">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /><path d="M8 7h8" /><path d="M8 11h8" /></svg>
+          </span>
+          <span className={styles.heroBgIcon} data-icon="hand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0" /><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2" /><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" /><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /></svg>
+          </span>
+          <span className={styles.heroBgIcon} data-icon="sparkle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
+          </span>
+        </div>
         <div className={styles.heroShapes} aria-hidden="true">
           <span className={styles.heroShape} data-shape="1" />
           <span className={styles.heroShape} data-shape="2" />
@@ -86,15 +106,19 @@ export function Home() {
           <span className={styles.heroShape} data-shape="4" />
         </div>
         <div className={styles.heroNoise} aria-hidden="true" />
+        {/* منحنى سفلي للهيرو */}
+        <div className={styles.heroCurve} aria-hidden="true" />
         <Container size="wide" className={`${styles.heroContainer} js-hero-container`}>
           <div className={`${styles.heroGrid} ${isRtl ? styles.heroGridRtl : ''} js-hero-grid`}>
             {/* Content: title + card (right in RTL) */}
             <div className={`${styles.heroBanner} js-hero-banner`} dir={isRtl ? 'rtl' : 'ltr'}>
-              <p className={`${styles.heroBadge} js-hero-badge`}>{t('app.tagline')}</p>
-              <h1 className={`${styles.heroTitle} js-hero-title`}>{t('home.heroTitle')}</h1>
-              <p className={`${styles.heroSubtitle} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
+              <p className={`${styles.heroBadge} ${styles.heroReveal1} js-hero-badge`}>{t('app.tagline')}</p>
+              <h1 className={`${styles.heroTitle} ${styles.heroReveal2} js-hero-title`}>
+                <span className={styles.heroTitleLine}>{t('home.heroTitle')}</span>
+              </h1>
+              <p className={`${styles.heroSubtitle} ${styles.heroReveal3} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
               {/* بطاقة التسجيل مكان الرسم */}
-              <div className={`${styles.heroCardWrap} js-hero-card-wrap`}>
+              <div className={`${styles.heroCardWrap} ${styles.heroReveal4} js-hero-card-wrap`}>
                 <div className={`${styles.regCard} js-reg-card`} dir={isRtl ? 'rtl' : 'ltr'}>
                   <span className={styles.regCardIcon} aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -127,7 +151,7 @@ export function Home() {
                   <div
                     key={slide.id}
                     className={`${styles.heroBannerSlide} ${i === bannerIndex ? styles.heroBannerSlideActive : ''}`}
-                    style={{ background: slide.gradient }}
+                    style={{ background: 'transparent' }}
                     aria-hidden={i !== bannerIndex}
                   />
                 ))}
@@ -147,40 +171,15 @@ export function Home() {
               </div>
             </div>
           </div>
-
-          {/* Section 3 (bottom): Full-width motivational donation strip */}
-          <div className={`${styles.donationStrip} js-donation-strip`}>
-            <div className={`${styles.donationStripContent} js-donation-strip-content`}>
-              <h2 className={`${styles.donationStripHeading} js-donation-heading`}>{t('home.donationStripHeading')}</h2>
-              <p className={`${styles.donationStripSubtext} js-donation-subtext`}>{t('home.donationStripSubtext')}</p>
-              <div className={styles.donationStripStats}>
-                <div className={styles.donationStripStat}>
-                  <span className={styles.donationStripStatValue}>500+</span>
-                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat1')}</span>
-                </div>
-                <div className={styles.donationStripStat}>
-                  <span className={styles.donationStripStatValue}>1M+</span>
-                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat2')}</span>
-                </div>
-                <div className={styles.donationStripStat}>
-                  <span className={styles.donationStripStatValue}>2K+</span>
-                  <span className={styles.donationStripStatLabel}>{t('home.donationStripStat3')}</span>
-                </div>
-              </div>
-              <Link to="/donate" className={styles.donationStripCta}>
-                {t('home.ctaDonate')}
-              </Link>
-            </div>
-          </div>
         </Container>
       </section>
 
       {/* Featured campaigns + donations: same horizontal padding as other pages */}
       <div className={styles.pageGutter}>
-      <section id="featured" className={styles.sectionCampaigns}>
+      <section id="campaigns" className={styles.sectionCampaigns}>
         <Container size="wide">
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>{t('home.featuredCampaigns')}</h2>
+            <h2 className={styles.sectionTitle}>{t('nav.campaigns')}</h2>
           </div>
           {loadingCampaigns ? (
             <div className={styles.loadingState}>
@@ -189,12 +188,12 @@ export function Home() {
               </div>
               <p className={styles.placeholderText}>{t('common.loading')}</p>
             </div>
-          ) : featured.length === 0 ? (
+          ) : campaigns.length === 0 ? (
             <p className={styles.placeholderText}>{t('campaigns.noCampaigns')}</p>
           ) : (
             <>
               <div className={styles.cardGrid}>
-                {featured.slice(0, 6).map((item) => (
+                {campaigns.map((item) => (
                   <article key={item.id} className={styles.campaignCard}>
                     <Link to={`/donate?campaign_id=${item.id}`} className={styles.campaignCardLink}>
                       <div
