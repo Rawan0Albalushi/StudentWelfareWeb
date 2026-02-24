@@ -52,11 +52,14 @@
 "amount": "Amount (OMR)",
   "currencyShort": "OMR",
   "quickAmounts": "Quick amounts",
+    "phone": "Phone number (optional)",
+    "phonePlaceholder": "e.g. 91234567",
     "anonymous": "Donate anonymously",
     "note": "Message (optional)",
     "submit": "Proceed to payment",
     "success": "Thank you for your donation",
-    "error": "Something went wrong, please try again"
+    "error": "Something went wrong, please try again",
+    "paymentCancelled": "Payment was cancelled"
   },
   "auth": {
     "login": "Login",

@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext'
 import { campaignService } from '../../services/campaignService'
 import { donationService } from '../../services/donationService'
 import { paymentService } from '../../services/paymentService'
+import { ApiError, clearToken } from '../../services/apiClient'
 import type { CampaignOrProgram } from '../../types/api'
 import styles from './Donate.module.css'
 
@@ -16,7 +17,7 @@ const FALLBACK_QUICK_AMOUNTS = [10, 25, 50, 100, 200, 500]
 
 export function Donate() {
   const { t, i18n } = useTranslation('common')
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, refreshProfile } = useAuth()
   const [searchParams] = useSearchParams()
   const campaignIdParam = searchParams.get('campaign_id')
   const programIdParam = searchParams.get('program_id')
@@ -33,6 +34,7 @@ export function Donate() {
   const [selectedId, setSelectedId] = useState<string>(campaignIdParam ?? programIdParam ?? '')
   const [amount, setAmount] = useState<string>(programIdParam || campaignIdParam ? '' : '')
   const [anonymous, setAnonymous] = useState(false)
+  const [donorPhone, setDonorPhone] = useState('')
   const [note, setNote] = useState('')
 
   useEffect(() => {
@@ -96,15 +98,29 @@ export function Donate() {
         amount: numAmount,
         is_anonymous: anonymous,
         note: note.trim() || undefined,
+        message: note.trim() || undefined,
         return_origin: returnOrigin,
+        ...(donorPhone.trim() ? { donor_phone: donorPhone.trim() } : {}),
         ...(selectedType === 'campaign' && id ? { campaign_id: id } : {}),
         ...(selectedType === 'program' && id ? { program_id: id } : {}),
       }
       // Anonymous: backend may require donor_name; send default per THAWANI_PAYMENT_INTEGRATION.md
       const anonymousBody = !isAuthenticated ? { ...body, donor_name: 'متبرع' } : body
-      const res = isAuthenticated
-        ? await donationService.createWithPayment(body)
-        : await donationService.createAnonymousWithPayment(anonymousBody)
+      let res: Awaited<ReturnType<typeof donationService.createWithPayment>>
+      try {
+        res = isAuthenticated
+          ? await donationService.createWithPayment(body)
+          : await donationService.createAnonymousWithPayment(anonymousBody)
+      } catch (firstErr) {
+        // If 401 (e.g. expired token), clear token and retry as anonymous so donation without login works
+        if (firstErr instanceof ApiError && firstErr.status === 401) {
+          clearToken()
+          refreshProfile()
+          res = await donationService.createAnonymousWithPayment(anonymousBody)
+        } else {
+          throw firstErr
+        }
+      }
       if (res.payment_error && !res.payment_url) {
         setError(res.payment_error || t('donate.error'))
         if (res.donation_id) setRetryDonationId(res.donation_id)
@@ -116,7 +132,16 @@ export function Donate() {
       }
       setError(t('donate.error'))
     } catch (err) {
-      const msg = err instanceof Error ? err.message : t('donate.error')
+      let msg = err instanceof Error ? err.message : t('donate.error')
+      if (err instanceof ApiError && err.status === 422 && err.data && typeof err.data === 'object') {
+        const d = err.data as { message?: string; errors?: Record<string, string[]> }
+        if (d.errors && typeof d.errors === 'object') {
+          const first = Object.values(d.errors).flat().find(Boolean)
+          if (first) msg = first
+        } else if (typeof d.message === 'string' && d.message) {
+          msg = d.message
+        }
+      }
       setError(msg)
     } finally {
       setSubmitting(false)
@@ -192,11 +217,22 @@ export function Donate() {
               <input
                 type="number"
                 min={0.001}
-                step={0.5}
+                step="any"
                 className={styles.input}
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0"
+                disabled={submitting}
+              />
+            </label>
+            <label className={styles.label}>
+              {t('donate.phone')}
+              <input
+                type="tel"
+                className={styles.input}
+                value={donorPhone}
+                onChange={(e) => setDonorPhone(e.target.value)}
+                placeholder={t('donate.phonePlaceholder')}
                 disabled={submitting}
               />
             </label>

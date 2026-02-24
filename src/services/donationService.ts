@@ -1,4 +1,5 @@
 import { api } from './apiClient'
+import { CLIENT_SOURCE } from './apiClient'
 import type { RecentDonation } from '../types/api'
 
 function unwrapList<T>(data: unknown): T[] {
@@ -55,7 +56,7 @@ function extractSessionId(data: unknown): string | null {
 
 export const donationService = {
   async createWithPayment(body: DonationWithPaymentBody): Promise<DonationWithPaymentResponse> {
-    const data = await api.post<unknown>('/donations/with-payment', body)
+    const data = await api.post<unknown>('/donations/with-payment', { ...body, source: CLIENT_SOURCE })
     const payment_url = extractPaymentUrl(data)
     const session_id = extractSessionId(data) ?? undefined
     const donation = (data as Record<string, unknown>).data && typeof (data as Record<string, unknown>).data === 'object'
@@ -71,8 +72,9 @@ export const donationService = {
     }
   },
 
+  /** Public endpoint (no auth). Sends request without Bearer so backend treats as guest (API_DOCUMENTATION.md §5). */
   async createAnonymousWithPayment(body: DonationWithPaymentBody): Promise<DonationWithPaymentResponse> {
-    const data = await api.post<unknown>('/donations/anonymous-with-payment', body)
+    const data = await api.post<unknown>('/donations/anonymous-with-payment', { ...body, source: CLIENT_SOURCE }, { noAuth: true })
     const payment_url = extractPaymentUrl(data)
     const session_id = extractSessionId(data) ?? undefined
     return {

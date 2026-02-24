@@ -1,4 +1,5 @@
 import { api } from './apiClient'
+import { CLIENT_SOURCE } from './apiClient'
 
 /** @see THAWANI_PAYMENT_INTEGRATION.md */
 
@@ -20,6 +21,7 @@ export const paymentService = {
     const data = await api.post<unknown>('/payments/create-with-donation', {
       donation_id: donationId,
       amount_omr: amountOmr,
+      source: CLIENT_SOURCE,
       ...(returnOrigin ? { return_origin: returnOrigin } : {}),
     })
     const d = data as Record<string, unknown>

@@ -17,6 +17,7 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   const isActive = (path: string) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path))
+  const isHome = location.pathname === '/'
 
   const navItems = [
     { to: '/', label: t('nav.home') },
@@ -35,7 +36,8 @@ export function Header() {
   }
 
   return (
-    <header className={styles.header} role="banner">
+    <header className={`${styles.header} ${isHome ? styles.headerStraight : ''}`.trim()} role="banner">
+      <div className={styles.headerInner}>
       <Container size="wide" className={styles.container}>
         <Link to="/" className={styles.logo} aria-label={t('app.name')}>
           {t('app.name')}
@@ -126,6 +128,20 @@ export function Header() {
           </div>
         </nav>
       </Container>
+      {!isHome && (
+        <div className={styles.waveWrap} aria-hidden>
+          <svg className={styles.wave} viewBox="0 0 320 24" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="headerWaveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#A0207E" />
+                <stop offset="100%" stopColor="#2DAAE2" />
+              </linearGradient>
+            </defs>
+            <path d="M0 12C40 0 120 24 160 12C200 0 280 24 320 12V24H0V12Z" fill="url(#headerWaveGradient)" />
+          </svg>
+        </div>
+      )}
+      </div>
     </header>
   )
 }

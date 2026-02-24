@@ -1,7 +1,8 @@
 /**
  * Backend base URL. Set in .env as VITE_API_URL (e.g. https://welfare-student.maksab.om).
- * API v1 base = ${API_BASE_URL}/api/v1
- * Auth base = ${API_BASE_URL}/api
+ * API v1 base = ${API_BASE_URL}/api/v1  (catalog, donations, payments, me, etc.)
+ * Auth base = ${API_BASE_URL}/api       (auth/register, auth/login, auth/logout)
+ * @see API_DOCUMENTATION.md for full endpoint list.
  */
 export const API_BASE_URL =
   typeof import.meta.env !== 'undefined' && import.meta.env.VITE_API_URL

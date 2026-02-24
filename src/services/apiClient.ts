@@ -1,6 +1,14 @@
 import { API_AUTH_URL, API_V1_URL } from '../config/api'
 
+/**
+ * API client: auth uses /api (Bearer + Sanctum), v1 uses /api/v1.
+ * Accept: application/json and 401 → clear token + onUnauthorized per API_DOCUMENTATION.md.
+ * Web client sends X-Client-Source: web so backend can distinguish from app.
+ */
 const TOKEN_KEY = 'student_care_token'
+
+/** Sent on all v1 requests so backend treats donations/payments as from web (default). */
+export const CLIENT_SOURCE = 'web' as const
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
@@ -20,23 +28,28 @@ export function setOnUnauthorized(fn: OnUnauthorized): void {
   onUnauthorized = fn
 }
 
+export type RequestOptions = { noAuth?: boolean }
+
 async function request(
   baseUrl: string,
   path: string,
-  options: RequestInit & { params?: Record<string, string | number> } = {}
+  options: RequestInit & { params?: Record<string, string | number>; noAuth?: boolean } = {}
 ): Promise<Response> {
-  const { params, ...init } = options
+  const { params, noAuth, ...init } = options
   const url = new URL(path.startsWith('http') ? path : baseUrl + path)
   if (params) {
     Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)))
   }
-  const token = getToken()
+  const token = noAuth ? null : getToken()
   const headers: HeadersInit = {
     Accept: 'application/json',
     ...(init.headers as Record<string, string>),
   }
   if (token) {
     (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+  }
+  if (baseUrl === API_V1_URL) {
+    (headers as Record<string, string>)['X-Client-Source'] = CLIENT_SOURCE
   }
   if (init.body && typeof init.body === 'string' && !headers['Content-Type']) {
     (headers as Record<string, string>)['Content-Type'] = 'application/json'
@@ -92,11 +105,12 @@ export const api = {
     return data
   },
 
-  async post<T = unknown>(path: string, body?: unknown): Promise<T> {
+  async post<T = unknown>(path: string, body?: unknown, options?: { noAuth?: boolean }): Promise<T> {
     if (!API_V1_URL) throw new Error('VITE_API_URL is not set')
     const res = await request(API_V1_URL, path, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
+      noAuth: options?.noAuth,
     })
     const data = await parseJson<T>(res)
     if (!res.ok) throw new ApiError(res.status, data)

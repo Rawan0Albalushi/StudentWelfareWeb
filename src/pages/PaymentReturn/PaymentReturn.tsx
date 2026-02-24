@@ -13,8 +13,10 @@ export function PaymentReturn() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'cancelled'>('loading')
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  // Backend redirects to return_origin with ?session_id=...&status=success|cancel (see THAWANI_PAYMENT_INTEGRATION.md)
+  // Backend redirects to {origin}/payments/success?donation_id=...&session_id=...&result=success|cancel
   const sessionId = searchParams.get('session_id') ?? searchParams.get('sessionId')
+  const donationIdParam = searchParams.get('donation_id')
+  const donationId = donationIdParam ? (donationIdParam as string) : undefined
   const result = searchParams.get('result') ?? searchParams.get('status')
   const cancelled =
     result === 'cancelled' || result === 'cancel' || searchParams.get('cancel') !== null
@@ -25,9 +27,10 @@ export function PaymentReturn() {
       return
     }
     const isSuccess = result === 'success'
-    if (isSuccess && sessionId) {
+    const confirmPayload = { session_id: sessionId, donation_id: donationId }
+    if ((isSuccess || sessionId) && (sessionId || donationId)) {
       paymentService
-        .confirm({ session_id: sessionId })
+        .confirm(confirmPayload)
         .then(() => setStatus('success'))
         .catch((err) => {
           setStatus('error')
@@ -37,13 +40,13 @@ export function PaymentReturn() {
     }
     if (sessionId) {
       paymentService
-        .confirm({ session_id: sessionId })
+        .confirm(confirmPayload)
         .then(() => setStatus('success'))
         .catch(() => setStatus('error'))
       return
     }
     setStatus('error')
-  }, [sessionId, result, cancelled])
+  }, [sessionId, donationId, result, cancelled])
 
   return (
     <PageLayout>
@@ -60,7 +63,7 @@ export function PaymentReturn() {
           )}
           {status === 'cancelled' && (
             <>
-              <p className={styles.messageMuted}>{t('common.cancel')}</p>
+              <p className={styles.messageMuted}>{t('donate.paymentCancelled')}</p>
               <Link to="/donate">
                 <Button>{t('donate.title')}</Button>
               </Link>

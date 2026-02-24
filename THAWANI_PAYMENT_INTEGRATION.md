@@ -227,8 +227,23 @@ or use `donation` + numeric id: `donation10`.
 
 ## 6. Success and cancel URLs
 
-- **Success URL:** Backend exposes e.g. `{APP_URL}/api/v1/payments/success`. Thawani redirects the user here after successful payment. The backend can then redirect to your web app (e.g. using `return_origin` + query params like `?session_id=...&status=success`).
-- **Cancel URL:** Backend exposes e.g. `{APP_URL}/api/v1/payments/cancel`. Thawani redirects here when the user cancels. Again, the backend may redirect to your app with something like `status=cancel`.
+- **Success URL:** Backend exposes e.g. `{APP_URL}/api/v1/payments/success` (or `/api/v1/payments/mobile/success`). **Important:** The URL passed to Thawani must be the **full backend URL** (e.g. `https://welfare-student.maksab.om/api/v1/payments/success`), not `localhost`, so that after payment Thawani redirects the user to your backend.
+- **Cancel URL:** Backend exposes e.g. `{APP_URL}/api/v1/payments/cancel`. Thawani redirects here when the user cancels.
+
+**Backend redirect to web app (required for web):** When the user lands on the backend success (or cancel) page **in a browser** (e.g. after Thawani redirect), the backend **must** respond with **HTTP 302 Redirect** to the web app—**not** JSON. If the backend returns JSON, the user will see raw JSON in the browser instead of the success page.
+
+- **Success:** Redirect (302) to:  
+  `{return_origin}/payments/success?donation_id={donation_id}&session_id={session_id}&result=success`  
+  (or `{return_origin}/donate/return?session_id=...&status=success&donation_id=...`).
+- **Cancel:** Redirect (302) to:  
+  `{return_origin}/payments/success?result=cancel`  
+  (or `{return_origin}/donate/return?status=cancel`).
+
+Use the `return_origin` saved when creating the donation/session. If there is no `return_origin`, then returning JSON (e.g. for mobile API clients) is acceptable.
+
+**Important for `/api/v1/payments/mobile/success`:** When this URL is opened in a **browser** (e.g. user paid via web and Thawani sent them here), the backend must **redirect** to the web app as above. Do not return JSON for browser requests; only return JSON when the client is a mobile app that expects it.
+
+The web app listens on `/donate/return` and `/payments/success`; both routes show the same success/cancel UI and call **POST** `/api/v1/payments/confirm` with `session_id` (and optionally `donation_id`).
 
 These URLs are usually configured in the backend (and in Thawani dashboard), not sent from the frontend on each request. The frontend only needs to:
 

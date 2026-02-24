@@ -38,6 +38,8 @@ export interface Category {
   status?: string
 }
 
+export type ClientSource = 'web' | 'app'
+
 export interface RecentDonation {
   id?: number
   amount?: number
@@ -45,6 +47,7 @@ export interface RecentDonation {
   campaign_id?: number
   program_id?: number
   created_at?: string
+  source?: ClientSource
   [key: string]: unknown
 }
 
