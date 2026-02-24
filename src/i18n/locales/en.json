@@ -58,6 +58,7 @@
     "note": "Message (optional)",
     "submit": "Proceed to payment",
     "success": "Thank you for your donation",
+    "successSubtext": "Your donation has been received and will support students",
     "error": "Something went wrong, please try again",
     "paymentCancelled": "Payment was cancelled"
   },

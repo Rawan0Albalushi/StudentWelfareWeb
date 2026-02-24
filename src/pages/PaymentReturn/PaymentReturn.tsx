@@ -7,13 +7,35 @@ import { Button } from '../../components/ui/Button'
 import { paymentService } from '../../services/paymentService'
 import styles from './PaymentReturn.module.css'
 
+const IconSuccess = () => (
+  <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+)
+
+const IconCancelled = () => (
+  <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="15" y1="9" x2="9" y2="15" />
+    <line x1="9" y1="9" x2="15" y2="15" />
+  </svg>
+)
+
+const IconError = () => (
+  <svg className={styles.icon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="12" cy="12" r="10" />
+    <line x1="12" y1="8" x2="12" y2="12" />
+    <line x1="12" y1="16" x2="12.01" y2="16" />
+  </svg>
+)
+
 export function PaymentReturn() {
   const { t } = useTranslation('common')
   const [searchParams] = useSearchParams()
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'cancelled'>('loading')
   const [errorMessage, setErrorMessage] = useState<string>('')
 
-  // Backend redirects to {origin}/payments/success?donation_id=...&session_id=...&result=success|cancel
   const sessionId = searchParams.get('session_id') ?? searchParams.get('sessionId')
   const donationIdParam = searchParams.get('donation_id')
   const donationId = donationIdParam ? (donationIdParam as string) : undefined
@@ -51,33 +73,60 @@ export function PaymentReturn() {
   return (
     <PageLayout>
       <Container size="narrow">
-        <div className={styles.box}>
-          {status === 'loading' && <p className={styles.message}>{t('common.loading')}</p>}
+        {status === 'success' && <div className={styles.successStrip} aria-hidden />}
+        <section
+          className={styles.card}
+          data-status={status}
+          aria-live="polite"
+          aria-busy={status === 'loading'}
+        >
+          {status === 'loading' && (
+            <>
+              <div className={styles.spinner} aria-hidden />
+              <p className={styles.message}>{t('common.loading')}</p>
+            </>
+          )}
           {status === 'success' && (
             <>
-              <p className={styles.messageSuccess}>{t('donate.success')}</p>
-              <Link to="/">
-                <Button>{t('nav.home')}</Button>
-              </Link>
+              <div className={styles.iconWrap}>
+                <IconSuccess />
+              </div>
+              <h2 className={styles.title}>{t('donate.success')}</h2>
+              <p className={styles.subtext}>{t('donate.successSubtext')}</p>
+              <div className={styles.actions}>
+                <Link to="/" className={styles.primaryLink}>
+                  <Button size="lg">{t('nav.home')}</Button>
+                </Link>
+              </div>
             </>
           )}
           {status === 'cancelled' && (
             <>
-              <p className={styles.messageMuted}>{t('donate.paymentCancelled')}</p>
-              <Link to="/donate">
-                <Button>{t('donate.title')}</Button>
-              </Link>
+              <div className={styles.iconWrap}>
+                <IconCancelled />
+              </div>
+              <h2 className={styles.title}>{t('donate.paymentCancelled')}</h2>
+              <div className={styles.actions}>
+                <Link to="/donate">
+                  <Button size="lg">{t('donate.title')}</Button>
+                </Link>
+              </div>
             </>
           )}
           {status === 'error' && (
             <>
-              <p className={styles.messageError}>{errorMessage || t('donate.error')}</p>
-              <Link to="/donate">
-                <Button variant="outline">{t('common.retry')}</Button>
-              </Link>
+              <div className={styles.iconWrap}>
+                <IconError />
+              </div>
+              <h2 className={styles.title}>{errorMessage || t('donate.error')}</h2>
+              <div className={styles.actions}>
+                <Link to="/donate">
+                  <Button variant="outline" size="lg">{t('common.retry')}</Button>
+                </Link>
+              </div>
             </>
           )}
-        </div>
+        </section>
       </Container>
     </PageLayout>
   )
