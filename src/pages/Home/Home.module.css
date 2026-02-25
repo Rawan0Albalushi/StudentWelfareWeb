@@ -3,10 +3,7 @@
 .hero {
   --hero-ease: cubic-bezier(0.33, 1, 0.68, 1);
   --hero-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --hero-duration-slow: 16s;
-  --hero-duration-mid: 12s;
-  --hero-duration-fast: 8s;
-  --hero-reveal-duration: 0.75s;
+  --hero-reveal-duration: 0.5s;
   position: relative;
   width: 100%;
   min-height: 58vh;
@@ -43,7 +40,7 @@
   border-radius: 0 0 min(12rem, 24%) min(12rem, 24%);
 }
 
-/* لمعة متحركة موحّدة مع توقيت الهيرو */
+/* لمعة ثابتة خفيفة — بدون حركة */
 .heroShine {
   position: absolute;
   inset: 0;
@@ -52,20 +49,12 @@
   background: linear-gradient(
     110deg,
     transparent 0%,
-    transparent 40%,
-    rgba(255, 255, 255, 0.06) 48%,
-    rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0.06) 52%,
-    transparent 60%,
+    transparent 45%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 55%,
     transparent 100%
   );
-  background-size: 200% 100%;
-  animation: heroShineMove var(--hero-duration-mid) var(--hero-ease) infinite;
-}
-
-@keyframes heroShineMove {
-  0%, 100% { background-position: 120% 0; }
-  50% { background-position: -20% 0; }
+  background-size: 100% 100%;
 }
 
 /* أيقونات زينة في خلفية الهيرو */
@@ -83,7 +72,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: heroFloat var(--hero-duration-slow) var(--hero-ease) infinite;
 }
 
 .heroBgIcon svg {
@@ -96,7 +84,6 @@
   height: 72px;
   top: 12%;
   right: 18%;
-  animation-delay: 0s;
 }
 
 .heroBgIcon[data-icon='graduation'] {
@@ -104,38 +91,10 @@
   height: 88px;
   bottom: 25%;
   left: 5%;
-  animation-delay: -2s;
-}
-
-.heroBgIcon[data-icon='book'] {
-  width: 64px;
-  height: 64px;
-  top: 45%;
-  right: 8%;
-  animation-delay: -4s;
-}
-
-.heroBgIcon[data-icon='hand'] {
-  width: 56px;
-  height: 56px;
-  bottom: 15%;
-  right: 28%;
-  animation-delay: -6s;
-}
-
-.heroBgIcon[data-icon='sparkle'] {
-  width: 48px;
-  height: 48px;
-  top: 28%;
-  left: 12%;
-  animation-delay: -3s;
 }
 
 .hero[dir='rtl'] .heroBgIcon[data-icon='heart'] { right: auto; left: 18%; }
 .hero[dir='rtl'] .heroBgIcon[data-icon='graduation'] { left: auto; right: 5%; }
-.hero[dir='rtl'] .heroBgIcon[data-icon='book'] { right: auto; left: 8%; }
-.hero[dir='rtl'] .heroBgIcon[data-icon='hand'] { right: auto; left: 28%; }
-.hero[dir='rtl'] .heroBgIcon[data-icon='sparkle'] { left: auto; right: 12%; }
 
 
 /* Mesh-style gradient background — modern depth */
@@ -153,11 +112,10 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 100% 80% at 15% 20%, rgba(255, 255, 255, 0.18) 0%, transparent 45%),
-    radial-gradient(ellipse 70% 60% at 88% 75%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 65%);
+    radial-gradient(ellipse 100% 80% at 15% 20%, rgba(255, 255, 255, 0.14) 0%, transparent 45%),
+    radial-gradient(ellipse 70% 60% at 88% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
   pointer-events: none;
-  animation: heroOrbPulse var(--hero-duration-mid) var(--hero-ease) infinite;
 }
 
 .heroBg::after {
@@ -168,12 +126,7 @@
   pointer-events: none;
 }
 
-@keyframes heroOrbPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.85; }
-}
-
-/* Floating shapes container */
+/* Shapes container — ثابت بدون طفو */
 .heroShapes {
   position: absolute;
   inset: 0;
@@ -189,9 +142,8 @@
   top: -140px;
   inset-inline-end: -100px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 65%);
   filter: blur(55px);
-  animation: heroFloat var(--hero-duration-slow) var(--hero-ease) infinite;
 }
 
 .heroShapes::after {
@@ -202,18 +154,15 @@
   bottom: -80px;
   inset-inline-start: -60px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 65%);
   filter: blur(50px);
-  animation: heroFloat var(--hero-duration-slow) var(--hero-ease) infinite reverse;
-  animation-delay: -5s;
 }
 
-/* Discrete floating shapes — نفس حركة الطفو الموحّدة */
+/* أشكال ثابتة للعمق */
 .heroShape {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  animation: heroFloat var(--hero-duration-mid) var(--hero-ease) infinite;
 }
 
 .heroShape[data-shape='1'] {
@@ -221,9 +170,8 @@
   height: 120px;
   top: 18%;
   inset-inline-start: 8%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   filter: blur(25px);
-  animation-delay: 0s;
 }
 
 .heroShape[data-shape='2'] {
@@ -231,55 +179,25 @@
   height: 80px;
   top: 55%;
   inset-inline-end: 15%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, transparent 70%);
   filter: blur(20px);
-  animation-delay: -3s;
-}
-
-.heroShape[data-shape='3'] {
-  width: 160px;
-  height: 160px;
-  bottom: 20%;
-  inset-inline-start: 25%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-  filter: blur(35px);
-  animation-delay: -6s;
-}
-
-.heroShape[data-shape='4'] {
-  width: 60px;
-  height: 60px;
-  top: 35%;
-  inset-inline-end: 28%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  filter: blur(15px);
-  animation-delay: -2s;
-}
-
-/* حركة طفو موحّدة للأيقونات والأشكال والبلور */
-@keyframes heroFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.9; }
-  33% { transform: translate(8px, -10px) scale(1.03); opacity: 1; }
-  66% { transform: translate(-6px, 8px) scale(0.98); opacity: 0.85; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero .heroShine,
-  .hero .heroBgIcon,
-  .hero .heroBg::before,
-  .hero .heroShapes::before,
-  .hero .heroShapes::after,
-  .hero .heroShape,
-  .hero .heroTitleLine,
-  .hero .heroBannerSlideActive {
+  .hero .heroReveal1,
+  .hero .heroReveal2,
+  .hero .heroReveal3,
+  .hero .heroReveal4 {
     animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 
 .heroNoise {
   position: absolute;
   inset: 0;
-  opacity: 0.025;
+  opacity: 0.015;
   pointer-events: none;
   z-index: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -403,12 +321,6 @@
   opacity: 1;
   transform: scale(1);
   z-index: 1;
-  animation: heroPulseSoft var(--hero-duration-mid) var(--hero-ease) infinite;
-}
-
-@keyframes heroPulseSoft {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.015); opacity: 0.98; }
 }
 
 .heroBannersDots {
@@ -632,19 +544,12 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
 
 .heroTitleLine {
   display: inline-block;
-  background: linear-gradient(120deg, #ffffff 0%, #f0e6ff 35%, #e8f4fc 70%, #ffffff 100%);
-  background-size: 200% auto;
+  background: linear-gradient(120deg, #ffffff 0%, #f5f0ff 50%, #ffffff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: none;
   filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.2));
-  animation: heroTitleShimmer var(--hero-duration-fast) var(--hero-ease) infinite;
-}
-
-@keyframes heroTitleShimmer {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
 }
 
 [lang='ar'] .heroTitle {

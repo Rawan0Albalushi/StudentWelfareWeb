@@ -81,7 +81,7 @@ export function Home() {
         <div className={styles.heroBg} />
         {/* لمعة متحركة */}
         <div className={styles.heroShine} aria-hidden="true" />
-        {/* أيقونات زينة في الخلفية */}
+        {/* أيقونات زينة خفيفة في الخلفية */}
         <div className={styles.heroBgIcons} aria-hidden="true">
           <span className={styles.heroBgIcon} data-icon="heart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
@@ -89,21 +89,10 @@ export function Home() {
           <span className={styles.heroBgIcon} data-icon="graduation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" /></svg>
           </span>
-          <span className={styles.heroBgIcon} data-icon="book">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /><path d="M8 7h8" /><path d="M8 11h8" /></svg>
-          </span>
-          <span className={styles.heroBgIcon} data-icon="hand">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0" /><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2" /><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8" /><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15" /></svg>
-          </span>
-          <span className={styles.heroBgIcon} data-icon="sparkle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" /></svg>
-          </span>
         </div>
         <div className={styles.heroShapes} aria-hidden="true">
           <span className={styles.heroShape} data-shape="1" />
           <span className={styles.heroShape} data-shape="2" />
-          <span className={styles.heroShape} data-shape="3" />
-          <span className={styles.heroShape} data-shape="4" />
         </div>
         <div className={styles.heroNoise} aria-hidden="true" />
         {/* منحنى سفلي للهيرو */}

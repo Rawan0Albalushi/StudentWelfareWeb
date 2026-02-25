@@ -127,6 +127,50 @@ export const api = {
     if (!res.ok) throw new ApiError(res.status, data)
     return data
   },
+
+  /** POST multipart/form-data (e.g. student registration). Do not set Content-Type; browser sets boundary. */
+  async postForm<T = unknown>(path: string, body: FormData): Promise<T> {
+    if (!API_V1_URL) throw new Error('VITE_API_URL is not set')
+    const headers: HeadersInit = {}
+    const token = getToken()
+    if (token) (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+    ;(headers as Record<string, string>)['X-Client-Source'] = CLIENT_SOURCE
+    ;(headers as Record<string, string>)['Accept'] = 'application/json'
+    const res = await fetch(API_V1_URL + path, {
+      method: 'POST',
+      headers,
+      body,
+    })
+    if (res.status === 401) {
+      clearToken()
+      onUnauthorized()
+    }
+    const data = await parseJson<T>(res)
+    if (!res.ok) throw new ApiError(res.status, data)
+    return data
+  },
+
+  /** PUT multipart/form-data (e.g. update student registration). */
+  async putForm<T = unknown>(path: string, body: FormData): Promise<T> {
+    if (!API_V1_URL) throw new Error('VITE_API_URL is not set')
+    const headers: HeadersInit = {}
+    const token = getToken()
+    if (token) (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+    ;(headers as Record<string, string>)['X-Client-Source'] = CLIENT_SOURCE
+    ;(headers as Record<string, string>)['Accept'] = 'application/json'
+    const res = await fetch(API_V1_URL + path, {
+      method: 'PUT',
+      headers,
+      body,
+    })
+    if (res.status === 401) {
+      clearToken()
+      onUnauthorized()
+    }
+    const data = await parseJson<T>(res)
+    if (!res.ok) throw new ApiError(res.status, data)
+    return data
+  },
 }
 
 export class ApiError extends Error {
