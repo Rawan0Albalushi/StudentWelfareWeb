@@ -6,6 +6,7 @@ import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 import { useAuth } from '../../context/AuthContext'
+import { resolveImageUrl } from '../../config/api'
 import { campaignService } from '../../services/campaignService'
 import { donationService } from '../../services/donationService'
 import { paymentService } from '../../services/paymentService'
@@ -33,9 +34,9 @@ export function Donate() {
   const [selectedType, setSelectedType] = useState<'campaign' | 'program'>('campaign')
   const [selectedId, setSelectedId] = useState<string>(campaignIdParam ?? programIdParam ?? '')
   const [amount, setAmount] = useState<string>(programIdParam || campaignIdParam ? '' : '')
-  const [anonymous, setAnonymous] = useState(false)
   const [donorPhone, setDonorPhone] = useState('')
-  const [note, setNote] = useState('')
+  const [campaignDetails, setCampaignDetails] = useState<CampaignOrProgram | null>(null)
+  const [detailsLoading, setDetailsLoading] = useState(false)
 
   useEffect(() => {
     if (campaignIdParam) {
@@ -70,12 +71,52 @@ export function Donate() {
     return () => { cancelled = true }
   }, [])
 
+  useEffect(() => {
+    if (!selectedId) {
+      setCampaignDetails(null)
+      return
+    }
+    const id = parseInt(selectedId, 10)
+    if (!Number.isFinite(id)) {
+      setCampaignDetails(null)
+      return
+    }
+    let cancelled = false
+    setDetailsLoading(true)
+    const fetchDetails = selectedType === 'campaign' ? campaignService.getCampaign(id) : campaignService.getProgram(id)
+    fetchDetails
+      .then((item) => {
+        if (!cancelled && item) setCampaignDetails(item)
+        if (!cancelled && !item) setCampaignDetails(null)
+      })
+      .catch(() => {
+        if (!cancelled) setCampaignDetails(null)
+      })
+      .finally(() => {
+        if (!cancelled) setDetailsLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [selectedId, selectedType])
+
   const options = selectedType === 'campaign' ? campaigns : programs
-  const selectedOption = options.find((o) => String(o.id) === selectedId)
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
   const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
+  const descKey = lang === 'ar' ? 'description_ar' : 'description_en'
+  const impactKey = lang === 'ar' ? 'impact_description_ar' : 'impact_description_en'
   const getTitle = (item: CampaignOrProgram) =>
     (item[titleKey as keyof CampaignOrProgram] as string) || item.title || `#${item.id}`
+  const getDescription = (item: CampaignOrProgram) => {
+    const text = (item[descKey as keyof CampaignOrProgram] as string) || item.description || ''
+    return text
+  }
+  const getImpact = (item: CampaignOrProgram) =>
+    (item[impactKey as keyof CampaignOrProgram] as string) || item.impact_description || ''
+  const getProgress = (item: CampaignOrProgram) => {
+    const goal = item.goal_amount ?? 0
+    const raised = item.raised_amount ?? 0
+    if (goal <= 0) return 0
+    return Math.min(100, Math.round((raised / goal) * 100))
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -87,10 +128,6 @@ export function Donate() {
       return
     }
     const id = selectedId ? parseInt(selectedId, 10) : undefined
-    if (!id && (campaigns.length > 0 || programs.length > 0)) {
-      setError(selectedType === 'campaign' ? 'Select a campaign' : 'Select a program')
-      return
-    }
     setSubmitting(true)
     try {
       const returnOrigin = typeof window !== 'undefined' ? window.location.origin : ''
@@ -99,15 +136,11 @@ export function Donate() {
         : donorPhone.trim()
       const body = {
         amount: numAmount,
-        is_anonymous: anonymous,
-        note: note.trim() || undefined,
-        message: note.trim() || undefined,
         return_origin: returnOrigin,
         ...(phoneForDonation ? { donor_phone: phoneForDonation } : {}),
         ...(selectedType === 'campaign' && id ? { campaign_id: id } : {}),
         ...(selectedType === 'program' && id ? { program_id: id } : {}),
       }
-      // Anonymous: backend may require donor_name; send default per THAWANI_PAYMENT_INTEGRATION.md
       const anonymousBody = !isAuthenticated ? { ...body, donor_name: 'متبرع' } : body
       let res: Awaited<ReturnType<typeof donationService.createWithPayment>>
       try {
@@ -154,8 +187,13 @@ export function Donate() {
   if (loading && options.length === 0) {
     return (
       <PageLayout>
-        <Container size="narrow">
-          <h1 className={styles.title}>{t('donate.title')}</h1>
+        <header className={styles.pageHeader}>
+          <Container size="wide">
+            <h1 className={styles.title}>{t('donate.title')}</h1>
+            <p className={styles.subtitle}>{t('donate.subtitle')}</p>
+          </Container>
+        </header>
+        <Container size="wide" className={styles.main}>
           <p className={styles.placeholder}>{t('common.loading')}</p>
         </Container>
       </PageLayout>
@@ -164,45 +202,84 @@ export function Donate() {
 
   return (
     <PageLayout>
-      <Container size="narrow">
-        <h1 className={styles.title}>{t('donate.title')}</h1>
-        <Card>
+      <header className={styles.pageHeader}>
+        <Container size="wide">
+          <h1 className={styles.title}>{t('donate.title')}</h1>
+          <p className={styles.subtitle}>{t('donate.subtitle')}</p>
+        </Container>
+      </header>
+
+      <Container size="wide" className={styles.main}>
+        <div className={styles.contentLayout}>
+          {selectedId && (detailsLoading || campaignDetails) && (
+            <div className={styles.campaignColumn}>
+              <Card className={styles.campaignDetailCard} aria-busy={detailsLoading}>
+            <CardContent>
+              {detailsLoading ? (
+                <div className={styles.campaignDetailSkeleton}>
+                  <div className={styles.campaignDetailSkeletonImage} />
+                  <div className={styles.campaignDetailSkeletonBody}>
+                    <div className={styles.campaignDetailSkeletonLine} />
+                    <div className={styles.campaignDetailSkeletonLine} style={{ width: '80%' }} />
+                    <div className={styles.campaignDetailSkeletonLine} style={{ width: '60%' }} />
+                  </div>
+                </div>
+              ) : campaignDetails ? (
+                <article className={styles.campaignDetail} aria-labelledby="donate-campaign-title">
+                  {(campaignDetails.image_url || campaignDetails.image || campaignDetails.banner_url || campaignDetails.banner) && (
+                    <div
+                      className={styles.campaignDetailImage}
+                      style={{
+                        backgroundImage: `url(${resolveImageUrl(campaignDetails.image_url || campaignDetails.image || campaignDetails.banner_url || campaignDetails.banner)})`,
+                      }}
+                      role="img"
+                      aria-label={getTitle(campaignDetails)}
+                    />
+                  )}
+                  <div className={styles.campaignDetailBody}>
+                    <h2 id="donate-campaign-title" className={styles.campaignDetailTitle}>
+                      {getTitle(campaignDetails)}
+                    </h2>
+                    {getDescription(campaignDetails) && (
+                      <p className={styles.campaignDetailDescription}>{getDescription(campaignDetails)}</p>
+                    )}
+                    {getImpact(campaignDetails) && (
+                      <p className={styles.campaignDetailImpact}>{getImpact(campaignDetails)}</p>
+                    )}
+                    {(campaignDetails.goal_amount != null && campaignDetails.goal_amount > 0) && (
+                      <div className={styles.campaignDetailProgressWrap}>
+                        <div
+                          className={styles.campaignDetailProgress}
+                          role="progressbar"
+                          aria-valuenow={getProgress(campaignDetails)}
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-label={t('campaigns.raised')}
+                        >
+                          <div
+                            className={styles.campaignDetailProgressBar}
+                            style={{ width: `${getProgress(campaignDetails)}%` }}
+                          />
+                        </div>
+                        <p className={styles.campaignDetailMeta}>
+                          {t('campaigns.raised')}: {campaignDetails.raised_amount ?? 0} {t('donate.currencyShort')} — {t('campaigns.goal')}: {campaignDetails.goal_amount} {t('donate.currencyShort')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </article>
+              ) : null}
+            </CardContent>
+              </Card>
+            </div>
+          )}
+
+          <div className={styles.formColumn}>
+            <Card className={styles.formCard}>
           <CardContent>
-            <form onSubmit={handleSubmit}>
-            {(campaigns.length > 0 || programs.length > 0) && (
-              <>
-                <label className={styles.label}>
-                  Type
-                  <select
-                    className={styles.select}
-                    value={selectedType}
-                    onChange={(e) => {
-                      setSelectedType(e.target.value as 'campaign' | 'program')
-                      setSelectedId('')
-                    }}
-                  >
-                    <option value="campaign">{t('nav.campaigns')}</option>
-                    <option value="program">{t('nav.programs')}</option>
-                  </select>
-                </label>
-                <label className={styles.label}>
-                  {selectedType === 'campaign' ? t('nav.campaigns') : t('nav.programs')}
-                  <select
-                    className={styles.select}
-                    value={selectedId}
-                    onChange={(e) => setSelectedId(e.target.value)}
-                  >
-                    <option value="">—</option>
-                    {(selectedType === 'campaign' ? campaigns : programs).map((item) => (
-                      <option key={item.id} value={String(item.id)}>
-                        {getTitle(item)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </>
-            )}
-            <p className={styles.label}>{t('donate.quickAmounts')}</p>
+            <form onSubmit={handleSubmit} className={styles.form}>
+              <section className={styles.formSection} aria-labelledby="donate-amounts-heading">
+                <p id="donate-amounts-heading" className={styles.sectionLabel}>{t('donate.quickAmounts')}</p>
             <div className={styles.quickAmounts}>
               {quickAmounts.map((n) => (
                 <button
@@ -215,9 +292,12 @@ export function Donate() {
                 </button>
               ))}
             </div>
-            <label className={styles.label}>
-              {t('donate.amount')}
-              <input
+              </section>
+
+              <section className={styles.formSection} aria-labelledby="donate-amount-input-heading">
+                <label id="donate-amount-input-heading" className={styles.label}>
+                  {t('donate.amount')}
+                  <input
                 type="number"
                 min={0.001}
                 step="any"
@@ -227,40 +307,26 @@ export function Donate() {
                 placeholder="0"
                 disabled={submitting}
               />
-            </label>
-            {!isAuthenticated && (
-              <label className={styles.label}>
-                {t('donate.phone')}
-                <input
-                  type="tel"
-                  className={styles.input}
-                  value={donorPhone}
-                  onChange={(e) => setDonorPhone(e.target.value)}
-                  placeholder={t('donate.phonePlaceholder')}
-                  disabled={submitting}
-                />
-              </label>
-            )}
-            <label className={styles.checkboxLabel}>
-              <input
-                type="checkbox"
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-                disabled={submitting}
-              />
-              <span>{t('donate.anonymous')}</span>
-            </label>
-            <label className={styles.label}>
-              {t('donate.note')}
-              <textarea
-                className={styles.textarea}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                rows={3}
-                disabled={submitting}
-              />
-            </label>
-            {error && (
+                </label>
+              </section>
+
+              {!isAuthenticated && (
+                <section className={styles.formSection}>
+                  <label className={styles.label}>
+                    {t('donate.phone')}
+                    <input
+                      type="tel"
+                      className={styles.input}
+                      value={donorPhone}
+                      onChange={(e) => setDonorPhone(e.target.value)}
+                      placeholder={t('donate.phonePlaceholder')}
+                      disabled={submitting}
+                    />
+                  </label>
+                </section>
+              )}
+
+              {error && (
               <div className={styles.formErrorWrap}>
                 <p className={styles.formError}>{error}</p>
                 {retryDonationId != null && (
@@ -302,7 +368,9 @@ export function Donate() {
             </Button>
             </form>
           </CardContent>
-        </Card>
+            </Card>
+          </div>
+        </div>
       </Container>
     </PageLayout>
   )

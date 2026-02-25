@@ -51,7 +51,9 @@
   },
   "donate": {
     "title": "Donate",
-"amount": "Amount (OMR)",
+    "subtitle": "Support our students by choosing a campaign or program and amount",
+    "type": "Donation type",
+    "amount": "Amount (OMR)",
   "currencyShort": "OMR",
   "quickAmounts": "Quick amounts",
     "phone": "Phone number (optional)",

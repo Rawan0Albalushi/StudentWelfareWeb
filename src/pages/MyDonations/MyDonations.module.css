@@ -1,7 +1,6 @@
 /* ========== Page header ========== */
 .pageHeader {
   background: var(--gradient-soft);
-  color: var(--color-text);
   padding-block: var(--space-10) var(--space-8);
   padding-inline: var(--space-4);
   margin-block-end: var(--space-8);
@@ -11,16 +10,19 @@
 
 .title {
   font-size: var(--text-3xl);
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 0 var(--space-2);
-  color: var(--color-text);
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .subtitle {
   font-size: var(--text-base);
-  color: var(--color-text-muted);
+  color: #FFFFFF;
   margin: 0;
   max-inline-size: 42ch;
+  opacity: 0.95;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .container {
