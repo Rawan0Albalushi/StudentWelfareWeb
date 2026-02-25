@@ -54,6 +54,8 @@
   --gradient-modern: var(--gradient-dominant);
   --gradient-reverse: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   --gradient-soft: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-secondary-light) 100%);
+  /* تدرج خفيف جداً لخلفية الصفحات (نفس المعتمد بدرجة شفافة) */
+  --gradient-page-bg: linear-gradient(135deg, rgba(160, 32, 126, 0.04) 0%, rgba(45, 170, 226, 0.055) 100%);
   /* تدرج غامق للفوتر (بين اللونين الأساسيين) */
   --gradient-dark: linear-gradient(180deg, var(--color-primary-dark) 0%, var(--color-secondary-dark) 100%);
 
