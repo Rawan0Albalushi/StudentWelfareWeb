@@ -5,7 +5,7 @@
   },
   "nav": {
     "home": "Home",
-    "campaigns": "Campaigns",
+    "campaigns": "Initiatives",
     "programs": "Support Programs",
     "donate": "Donate",
     "news": "News",
@@ -31,8 +31,8 @@
     "donationStripStat1": "Students helped",
     "donationStripStat2": "Raised (OMR)",
     "donationStripStat3": "Active donors",
-    "featuredCampaigns": "Featured Campaigns",
-    "urgentCampaigns": "Urgent Campaigns",
+    "featuredCampaigns": "Featured Initiatives",
+    "urgentCampaigns": "Urgent Initiatives",
     "campaignsSectionTitle": "Charitable Initiatives",
     "recentDonations": "Recent Donations",
     "recentDonationsSubtitle": "Latest donations supporting our students",
@@ -49,15 +49,15 @@
     "bannerSlide": "Slide {{number}}"
   },
   "campaigns": {
-    "title": "Campaigns & Programs",
-    "subtitle": "Support our campaigns and programs to make a lasting impact on students.",
+    "title": "Initiatives",
+    "subtitle": "Support our initiatives to make a lasting impact on students.",
     "raised": "Raised",
     "goal": "Goal",
     "donors": "Donors",
     "donate": "Donate",
     "details": "Details",
-    "noCampaigns": "No campaigns at the moment",
-    "noCampaignsDescription": "Check back later for new campaigns and programs to support."
+    "noCampaigns": "No initiatives at the moment",
+    "noCampaignsDescription": "Check back later for new initiatives to support."
   },
   "donate": {
     "title": "Donate",

@@ -11,7 +11,6 @@ import styles from './Campaigns.module.css'
 export function Campaigns() {
   const { t, i18n } = useTranslation('common')
   const [campaigns, setCampaigns] = useState<CampaignOrProgram[]>([])
-  const [programs, setPrograms] = useState<CampaignOrProgram[]>([])
   const [loading, setLoading] = useState(true)
 
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
@@ -28,20 +27,16 @@ export function Campaigns() {
 
   useEffect(() => {
     let cancelled = false
-    Promise.all([campaignService.getCampaigns(), campaignService.getPrograms()])
-      .then(([campList, progList]) => {
-        if (!cancelled) {
-          setCampaigns(campList)
-          setPrograms(progList)
-        }
+    campaignService
+      .getCampaigns()
+      .then((list) => {
+        if (!cancelled) setCampaigns(list)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
       })
     return () => { cancelled = true }
   }, [])
-
-  const all = [...campaigns.map((c) => ({ ...c, _type: 'campaign' as const })), ...programs.map((p) => ({ ...p, _type: 'program' as const }))]
 
   return (
     <PageLayout>
@@ -66,7 +61,7 @@ export function Campaigns() {
               </div>
             ))}
           </div>
-        ) : all.length === 0 ? (
+        ) : campaigns.length === 0 ? (
           <div className={styles.empty} role="status">
             <div className={styles.emptyIcon} aria-hidden>
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -79,10 +74,10 @@ export function Campaigns() {
           </div>
         ) : (
           <div className={styles.grid}>
-            {all.map((item) => (
-              <article key={`${item._type}-${item.id}`} className={styles.card}>
+            {campaigns.map((item) => (
+              <article key={item.id} className={styles.card}>
                 <Link
-                  to={item._type === 'campaign' ? `/donate?campaign_id=${item.id}` : `/donate?program_id=${item.id}`}
+                  to={`/donate?campaign_id=${item.id}`}
                   className={styles.cardLink}
                 >
                   <div

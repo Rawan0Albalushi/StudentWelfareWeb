@@ -5,7 +5,7 @@
   },
   "nav": {
     "home": "الرئيسية",
-    "campaigns": "الحملات",
+    "campaigns": "المبادرات",
     "programs": "برامج الدعم",
     "donate": "تبرع",
     "news": "الأخبار",
@@ -31,8 +31,8 @@
     "donationStripStat1": "طالب مستفيد",
     "donationStripStat2": "تم جمعه (ر.ع)",
     "donationStripStat3": "متبرع نشط",
-    "featuredCampaigns": "حملات مميزة",
-    "urgentCampaigns": "حملات عاجلة",
+    "featuredCampaigns": "مبادرات مميزة",
+    "urgentCampaigns": "مبادرات عاجلة",
     "campaignsSectionTitle": "المبادرات الخيرية",
     "recentDonations": "آخر التبرعات",
     "recentDonationsSubtitle": "آخر التبرعات المقدمة لدعم طلابنا",
@@ -49,15 +49,15 @@
     "bannerSlide": "شريحة {{number}}"
   },
   "campaigns": {
-    "title": "الحملات والبرامج",
-    "subtitle": "ادعم حملاتنا وبرامجنا لإحداث أثر دائم في حياة الطلاب.",
+    "title": "المبادرات",
+    "subtitle": "ادعم مبادراتنا لإحداث أثر دائم في حياة الطلاب.",
     "raised": "تم جمعه",
     "goal": "الهدف",
     "donors": "متبرع",
     "donate": "تبرع",
     "details": "التفاصيل",
-    "noCampaigns": "لا توجد حملات حالياً",
-    "noCampaignsDescription": "تفضل بالعودة لاحقاً لمتابعة الحملات والبرامج الجديدة."
+    "noCampaigns": "لا توجد مبادرات حالياً",
+    "noCampaignsDescription": "تفضل بالعودة لاحقاً لمتابعة المبادرات الجديدة."
   },
   "donate": {
     "title": "التبرع",
