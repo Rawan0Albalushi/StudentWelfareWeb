@@ -5,24 +5,31 @@ import { setDocumentDirection } from '../../i18n/config'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
+import { useAuth } from '../../context/AuthContext'
 import { campaignService } from '../../services/campaignService'
 import { donationService } from '../../services/donationService'
+import { studentRegistrationService, type StudentRegistrationResponse } from '../../services/studentRegistrationService'
+import { studentRegistrationCardService } from '../../services/studentRegistrationCardService'
+import { bannerService } from '../../services/bannerService'
 import { resolveImageUrl } from '../../config/api'
-import type { CampaignOrProgram, RecentDonation } from '../../types/api'
+import type { CampaignOrProgram, RecentDonation, Banner, StudentRegistrationCard } from '../../types/api'
 import styles from './Home.module.css'
 
-const HERO_BANNERS = [
-  { id: 1, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)' },
-  { id: 2, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 100%)' },
-  { id: 3, gradient: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.04) 100%)' },
-]
+const FALLBACK_CARD_DESC_AR = 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
+const FALLBACK_CARD_DESC_EN = 'Register your application for student support programs. Complete your details and upload required documents.'
 
 export function Home() {
   const { t, i18n } = useTranslation('common')
+  const { isAuthenticated } = useAuth()
   const [campaigns, setCampaigns] = useState<CampaignOrProgram[]>([])
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([])
+  const [myRegistration, setMyRegistration] = useState<StudentRegistrationResponse | null | undefined>(undefined)
+  const [registrationCard, setRegistrationCard] = useState<StudentRegistrationCard | null | undefined>(undefined)
+  const [banners, setBanners] = useState<Banner[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(true)
   const [loadingDonations, setLoadingDonations] = useState(true)
+  const [loadingHeroCard, setLoadingHeroCard] = useState(true)
+  const [loadingBanners, setLoadingBanners] = useState(true)
   const [bannerIndex, setBannerIndex] = useState(0)
 
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
@@ -87,22 +94,87 @@ export function Home() {
     setDocumentDirection(i18n.language || 'ar')
   }, [i18n.language])
 
+  // بطاقة تسجيل الطالب للصندوق — GET /api/v1/student-registration-card
+  useEffect(() => {
+    let cancelled = false
+    studentRegistrationCardService
+      .getCard()
+      .then((card) => { if (!cancelled) setRegistrationCard(card ?? null) })
+      .catch(() => { if (!cancelled) setRegistrationCard(null) })
+      .finally(() => { if (!cancelled) setLoadingHeroCard(false) })
+    return () => { cancelled = true }
+  }, [])
+
+  // البانرات المميزة — GET /api/v1/banners/featured
+  useEffect(() => {
+    let cancelled = false
+    bannerService
+      .getFeatured()
+      .then((list) => { if (!cancelled) setBanners(list || []) })
+      .catch((err) => {
+        if (!cancelled) console.error('[Home] banners/featured failed:', err)
+        if (!cancelled) setBanners([])
+      })
+      .finally(() => { if (!cancelled) setLoadingBanners(false) })
+    return () => { cancelled = true }
+  }, [])
+
   // Rotate hero banners every 5s
   useEffect(() => {
+    if (banners.length <= 1) return
     const id = setInterval(() => {
-      setBannerIndex((i) => (i + 1) % HERO_BANNERS.length)
+      setBannerIndex((i) => (i + 1) % banners.length)
     }, 5000)
     return () => clearInterval(id)
-  }, [])
+  }, [banners.length])
+
+  // جلب حالة طلب المستخدم المسجّل
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setMyRegistration(undefined)
+      return
+    }
+    let cancelled = false
+    studentRegistrationService
+      .getMyRegistration()
+      .then((reg) => { if (!cancelled) setMyRegistration(reg ?? null) })
+      .catch(() => { if (!cancelled) setMyRegistration(null) })
+    return () => { cancelled = true }
+  }, [isAuthenticated])
+
+  const regStatus = myRegistration && typeof myRegistration.status === 'string' ? String(myRegistration.status).toLowerCase() : ''
+  const statusLabel =
+    isAuthenticated && myRegistration && regStatus
+      ? (t(`studentRegistration.status_${regStatus}`) !== `studentRegistration.status_${regStatus}` ? t(`studentRegistration.status_${regStatus}`) : t('studentRegistration.status_pending'))
+      : isAuthenticated
+        ? t('home.ctaRequestStatus')
+        : t('home.ctaStartRegistration')
+  const statusClass =
+    regStatus === 'approved' ? styles.regCardButtonStatusApproved
+      : regStatus === 'rejected' ? styles.regCardButtonStatusRejected
+        : (regStatus === 'pending' || regStatus) ? styles.regCardButtonStatusPending
+          : ''
+
+  const hasBanners = banners.length > 0
+  const cardHeadline =
+    registrationCard && (i18n.language === 'ar' ? registrationCard.headline_ar : registrationCard.headline_en)
+      ? (i18n.language === 'ar' ? registrationCard.headline_ar : registrationCard.headline_en)!
+      : t('home.ctaRegister')
+  const cardSubtitle =
+    registrationCard && (i18n.language === 'ar' ? registrationCard.subtitle_ar : registrationCard.subtitle_en)
+      ? (i18n.language === 'ar' ? registrationCard.subtitle_ar : registrationCard.subtitle_en)!
+      : (lang === 'ar' ? FALLBACK_CARD_DESC_AR : FALLBACK_CARD_DESC_EN)
+  const cardBgImage =
+    registrationCard?.background_image_url ?? registrationCard?.background_image
+      ? resolveImageUrl(registrationCard.background_image_url || registrationCard.background_image)
+      : undefined
 
   return (
     <PageLayout noPadding>
-      {/* Hero: Section 1 = glassmorphism card; Section 2 = creative banner with illustration */}
+      {/* Hero: بطاقة التسجيل دائماً أولاً؛ البانرات خلفها مع إمكانية التمرير */}
       <section className={`${styles.hero} js-hero`} aria-label="Hero" dir={isRtl ? 'rtl' : 'ltr'} lang={i18n.language || 'ar'}>
         <div className={styles.heroBg} />
-        {/* لمعة متحركة */}
         <div className={styles.heroShine} aria-hidden="true" />
-        {/* أيقونات زينة خفيفة في الخلفية */}
         <div className={styles.heroBgIcons} aria-hidden="true">
           <span className={styles.heroBgIcon} data-icon="heart">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
@@ -116,69 +188,90 @@ export function Home() {
           <span className={styles.heroShape} data-shape="2" />
         </div>
         <div className={styles.heroNoise} aria-hidden="true" />
-        {/* منحنى سفلي للهيرو */}
         <div className={styles.heroCurve} aria-hidden="true" />
         <Container size="wide" className={`${styles.heroContainer} js-hero-container`}>
-          <div className={`${styles.heroGrid} ${isRtl ? styles.heroGridRtl : ''} js-hero-grid`}>
-            {/* Content: title + card (right in RTL) */}
+          <div className={`${styles.heroGrid} ${isRtl ? styles.heroGridRtl : ''} ${!hasBanners ? styles.heroGridNoBanners : ''} js-hero-grid`}>
+            {/* النص: شارة، عنوان، وصف */}
             <div className={`${styles.heroBanner} js-hero-banner`} dir={isRtl ? 'rtl' : 'ltr'}>
               <p className={`${styles.heroBadge} ${styles.heroReveal1} js-hero-badge`}>{t('app.tagline')}</p>
               <h1 className={`${styles.heroTitle} ${styles.heroReveal2} js-hero-title`}>
                 <span className={styles.heroTitleLine}>{t('home.heroTitle')}</span>
               </h1>
               <p className={`${styles.heroSubtitle} ${styles.heroReveal3} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
-              {/* بطاقة التسجيل مكان الرسم */}
-              <div className={`${styles.heroCardWrap} ${styles.heroReveal4} js-hero-card-wrap`}>
-                <div className={`${styles.regCard} js-reg-card`} dir={isRtl ? 'rtl' : 'ltr'}>
-                  <span className={styles.regCardIcon} aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                      <circle cx="9" cy="7" r="4" />
-                      <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                    </svg>
-                  </span>
-                  <h3 className={`${styles.regCardTitle} js-reg-card-title`}>{t('home.ctaRegister')}</h3>
-                  <p className={`${styles.regCardDesc} js-reg-card-desc`}>
-                    {lang === 'ar'
-                      ? 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
-                      : 'Register your application for student support programs. Complete your details and upload required documents.'}
-                  </p>
-<Link to="/student-registration" className={`${styles.regCardButton} js-reg-card-button`}>
-                    {t('home.ctaStartRegistration')}
-                    <span className={`${styles.regCardArrow} js-reg-card-arrow`} aria-hidden="true">→</span>
-                  </Link>
-                <Link to="/register" className={`${styles.regCardSecondaryLink} js-reg-card-link`}>
-                    {t('home.donorRegistration')}
-                  </Link>
-                </div>
-              </div>
             </div>
 
-            {/* Banners area (left in RTL – fills the empty space) */}
-            <div className={styles.heroBanners} aria-label={t('home.bannersLabel')} dir={isRtl ? 'rtl' : 'ltr'}>
-              <div className={styles.heroBannersTrack}>
-                {HERO_BANNERS.map((slide, i) => (
+            {/* منطقة موحّدة: بطاقة التسجيل أماماً، البانرات خلفها */}
+            <div className={`${styles.heroUnified} ${!hasBanners ? styles.heroUnifiedNoBanners : ''}`}>
+              {/* طبقة البانرات (خلفية) — تظهر فقط عند وجود بانرات */}
+              {hasBanners && (
+                <div className={styles.heroBannersBack} aria-label={t('home.bannersLabel')} dir={isRtl ? 'rtl' : 'ltr'}>
+                  <div className={styles.heroBannersTrack}>
+                    {banners.map((banner, i) => (
+                      <div
+                        key={banner.id}
+                        className={`${styles.heroBannerSlide} ${i === bannerIndex ? styles.heroBannerSlideActive : ''}`}
+                        style={{
+                          backgroundImage: banner.image_url || banner.image
+                            ? `url(${resolveImageUrl(banner.image_url || banner.image)})`
+                            : undefined,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          backgroundColor: 'var(--color-primary-dark, #1a5f7a)',
+                        }}
+                        aria-hidden={i !== bannerIndex}
+                      />
+                    ))}
+                  </div>
+                  <div className={styles.heroBannersDots} role="tablist" aria-label={t('home.bannersLabel')}>
+                    {banners.map((b, i) => (
+                      <button
+                        key={b.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={i === bannerIndex}
+                        aria-label={t('home.bannerSlide', { number: i + 1 })}
+                        className={`${styles.heroBannersDot} ${i === bannerIndex ? styles.heroBannersDotActive : ''}`}
+                        onClick={() => setBannerIndex(i)}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* بطاقة التسجيل — دائماً في المقدمة (محتواها من API أو افتراضي) */}
+              <div className={`${styles.heroCardForeground} ${styles.heroCardWrap} ${styles.heroReveal4} js-hero-card-wrap`}>
                   <div
-                    key={slide.id}
-                    className={`${styles.heroBannerSlide} ${i === bannerIndex ? styles.heroBannerSlideActive : ''}`}
-                    style={{ background: 'transparent' }}
-                    aria-hidden={i !== bannerIndex}
-                  />
-                ))}
-              </div>
-              <div className={styles.heroBannersDots} role="tablist" aria-label={t('home.bannersLabel')}>
-                {HERO_BANNERS.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    role="tab"
-                    aria-selected={i === bannerIndex}
-                    aria-label={t('home.bannerSlide', { number: i + 1 })}
-                    className={`${styles.heroBannersDot} ${i === bannerIndex ? styles.heroBannersDotActive : ''}`}
-                    onClick={() => setBannerIndex(i)}
-                  />
-                ))}
-              </div>
+                    className={`${styles.regCard} js-reg-card`}
+                    dir={isRtl ? 'rtl' : 'ltr'}
+                    style={
+                      cardBgImage
+                        ? {
+                            backgroundImage: `url(${cardBgImage})`,
+                            backgroundSize: 'cover',
+                            backgroundPosition: 'center',
+                          }
+                        : undefined
+                    }
+                  >
+                    {cardBgImage && <span className={styles.regCardOverlay} aria-hidden="true" />}
+                    <span className={styles.regCardIcon} aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
+                    </span>
+                    <h3 className={`${styles.regCardTitle} js-reg-card-title`}>{cardHeadline}</h3>
+                    <p className={`${styles.regCardDesc} js-reg-card-desc`}>{cardSubtitle}</p>
+                    <Link
+                      to="/student-registration"
+                      className={`${styles.regCardButton} ${statusClass} js-reg-card-button`}
+                    >
+                      {statusLabel}
+                      <span className={`${styles.regCardArrow} js-reg-card-arrow`} aria-hidden="true">→</span>
+                    </Link>
+                  </div>
+                </div>
             </div>
           </div>
         </Container>

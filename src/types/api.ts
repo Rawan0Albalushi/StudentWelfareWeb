@@ -84,18 +84,42 @@ export interface Banner {
   title?: string
   title_ar?: string
   title_en?: string
-  subtitle?: string
-  description?: string
+  description_ar?: string
+  description_en?: string
+  image?: string
   image_url?: string
   mobile_image_url?: string
+  link?: string
   action_url?: string
   action_label?: string
+  status?: string
+  order?: number
   is_featured?: boolean
   is_active?: boolean
   priority?: number
+  start_date?: string
+  end_date?: string
+  is_currently_active?: boolean
   starts_at?: string
   ends_at?: string
   placements?: string[]
+  created_at?: string
+  updated_at?: string
+}
+
+/** بطاقة تسجيل الطالب للصندوق (الهيرو) — من GET /api/v1/student-registration-card */
+export interface StudentRegistrationCard {
+  id: number
+  headline_ar?: string
+  headline_en?: string
+  subtitle_ar?: string
+  subtitle_en?: string
+  background?: string
+  background_image?: string
+  background_image_url?: string
+  status?: string
+  updated_at?: string
+  created_at?: string
 }
 
 export interface UserProfile {
