@@ -37,6 +37,27 @@ export function Home() {
     return Math.min(100, Math.round((raised / goal) * 100))
   }
 
+  const getTimeAgoKey = (iso?: string): { key: string; count?: number } => {
+    if (!iso) return { key: 'home.timeAgoJustNow' }
+    const d = new Date(iso)
+    if (Number.isNaN(d.getTime())) return { key: 'home.timeAgoJustNow' }
+    const diffMs = Date.now() - d.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+    const diffWeeks = Math.floor(diffDays / 7)
+    const diffMonths = Math.floor(diffDays / 30)
+    if (diffMins < 1) return { key: 'home.timeAgoJustNow' }
+    if (diffMins < 60) return { key: 'home.timeAgoMinutes', count: diffMins }
+    if (diffHours < 24) return { key: 'home.timeAgoHours', count: diffHours }
+    if (diffDays < 7) return { key: 'home.timeAgoDays', count: diffDays }
+    if (diffWeeks < 4) return { key: 'home.timeAgoWeeks', count: diffWeeks }
+    return { key: 'home.timeAgoMonths', count: diffMonths }
+  }
+
+  const formatDonationAmount = (amount?: number) =>
+    (amount != null ? Number(amount) : 0).toLocaleString('en', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+
   useEffect(() => {
     let cancelled = false
     campaignService
@@ -229,10 +250,11 @@ export function Home() {
       </section>
 
       {/* Recent donations */}
-      <section className={styles.sectionDonations}>
-        <Container size="content">
+      <section className={styles.sectionDonations} aria-labelledby="recent-donations-heading">
+        <Container size="wide">
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>{t('home.recentDonations')}</h2>
+            <h2 id="recent-donations-heading" className={styles.sectionTitle}>{t('home.recentDonations')}</h2>
+            <p className={styles.sectionSubtitle}>{t('home.recentDonationsSubtitle')}</p>
           </div>
           {loadingDonations ? (
             <div className={styles.loadingState}>
@@ -242,26 +264,41 @@ export function Home() {
               <p className={styles.placeholderText}>{t('common.loading')}</p>
             </div>
           ) : recentDonations.length === 0 ? (
-            <p className={styles.placeholderText}>—</p>
+            <div className={styles.donationEmpty}>
+              <span className={styles.donationEmptyIcon} aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
+              </span>
+              <p className={styles.placeholderText}>—</p>
+            </div>
           ) : (
             <ul className={styles.donationList} role="list">
-              {recentDonations.map((d, i) => (
-                <li key={(d as { id?: number }).id ?? i} className={styles.donationItem}>
-                  <span className={styles.donationAvatar} aria-hidden="true">
-                    {(d as RecentDonation).donor_name
-                      ? String((d as RecentDonation).donor_name).charAt(0).toUpperCase()
-                      : '?'}
-                  </span>
-                  <div className={styles.donationContent}>
-                    <span className={styles.donationAmount}>
-                      {(d as RecentDonation).amount ?? 0} OMR
+              {recentDonations.map((d, i) => {
+                const donation = d as RecentDonation
+                const displayName = donation.donor_name?.trim() || t('home.anonymousDonor')
+                const initial = donation.donor_name?.trim()
+                  ? String(donation.donor_name).charAt(0).toUpperCase()
+                  : '♥'
+                const timeAgo = getTimeAgoKey(donation.created_at)
+                return (
+                  <li key={donation.id ?? i} className={styles.donationItem}>
+                    <span className={styles.donationAvatar} aria-hidden="true">{initial}</span>
+                    <div className={styles.donationContent}>
+                      <span className={styles.donationAmount}>
+                        {formatDonationAmount(donation.amount)} {t('donate.currencyShort', 'OMR')}
+                      </span>
+                      <span className={styles.donationName}>{displayName}</span>
+                      {timeAgo.key !== 'home.timeAgoJustNow' && (
+                        <span className={styles.donationTime}>
+                          {t(timeAgo.key, { count: timeAgo.count ?? 0 })}
+                        </span>
+                      )}
+                    </div>
+                    <span className={styles.donationBadge} aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
                     </span>
-                    {(d as RecentDonation).donor_name && (
-                      <span className={styles.donationName}>{(d as RecentDonation).donor_name}</span>
-                    )}
-                  </div>
-                </li>
-              ))}
+                  </li>
+                )
+              })}
             </ul>
           )}
         </Container>
