@@ -11,12 +11,32 @@ import { donationService } from '../../services/donationService'
 import { studentRegistrationService, type StudentRegistrationResponse } from '../../services/studentRegistrationService'
 import { studentRegistrationCardService } from '../../services/studentRegistrationCardService'
 import { bannerService } from '../../services/bannerService'
+import { fundNewsService } from '../../services/fundNewsService'
+import { fundPartnerService } from '../../services/fundPartnerService'
 import { resolveImageUrl } from '../../config/api'
-import type { CampaignOrProgram, RecentDonation, Banner, StudentRegistrationCard } from '../../types/api'
+import type { CampaignOrProgram, RecentDonation, Banner, StudentRegistrationCard, FundNews, FundPartner } from '../../types/api'
 import styles from './Home.module.css'
 
 const FALLBACK_CARD_DESC_AR = 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
 const FALLBACK_CARD_DESC_EN = 'Register your application for student support programs. Complete your details and upload required documents.'
+
+function formatNewsDate(isoDate: string | undefined, locale: string): string {
+  if (!isoDate) return ''
+  try {
+    const d = new Date(isoDate)
+    if (Number.isNaN(d.getTime())) return ''
+    return new Intl.DateTimeFormat(locale === 'ar' ? 'ar-OM' : 'en-GB', { dateStyle: 'medium' }).format(d)
+  } catch {
+    return ''
+  }
+}
+
+function stripHtml(html: string): string {
+  if (typeof document === 'undefined') return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return (div.textContent || div.innerText || '').replace(/\s+/g, ' ').trim()
+}
 
 export function Home() {
   const { t, i18n } = useTranslation('common')
@@ -26,10 +46,14 @@ export function Home() {
   const [myRegistration, setMyRegistration] = useState<StudentRegistrationResponse | null | undefined>(undefined)
   const [registrationCard, setRegistrationCard] = useState<StudentRegistrationCard | null | undefined>(undefined)
   const [banners, setBanners] = useState<Banner[]>([])
+  const [newsList, setNewsList] = useState<FundNews[]>([])
+  const [partnersList, setPartnersList] = useState<FundPartner[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(true)
   const [loadingDonations, setLoadingDonations] = useState(true)
   const [loadingHeroCard, setLoadingHeroCard] = useState(true)
   const [loadingBanners, setLoadingBanners] = useState(true)
+  const [loadingNews, setLoadingNews] = useState(true)
+  const [loadingPartners, setLoadingPartners] = useState(true)
   const [bannerIndex, setBannerIndex] = useState(0)
 
   const lang = i18n.language === 'ar' ? 'ar' : 'en'
@@ -80,7 +104,7 @@ export function Home() {
   useEffect(() => {
     let cancelled = false
     donationService
-      .getRecent(5)
+      .getRecent(10)
       .then((list) => { if (!cancelled) setRecentDonations(list) })
       .catch((err) => {
         if (!cancelled) console.error('[Home] donations/recent failed:', err)
@@ -116,6 +140,34 @@ export function Home() {
         if (!cancelled) setBanners([])
       })
       .finally(() => { if (!cancelled) setLoadingBanners(false) })
+    return () => { cancelled = true }
+  }, [])
+
+  // الأخبار المميزة — GET /api/v1/fund-news (أو featured)
+  useEffect(() => {
+    let cancelled = false
+    fundNewsService
+      .getList()
+      .then((list) => { if (!cancelled) setNewsList(list || []) })
+      .catch((err) => {
+        if (!cancelled) console.error('[Home] fund-news failed:', err)
+        if (!cancelled) setNewsList([])
+      })
+      .finally(() => { if (!cancelled) setLoadingNews(false) })
+    return () => { cancelled = true }
+  }, [])
+
+  // الشركاء — GET /api/v1/fund-partners
+  useEffect(() => {
+    let cancelled = false
+    fundPartnerService
+      .getList()
+      .then((list) => { if (!cancelled) setPartnersList(list || []) })
+      .catch((err) => {
+        if (!cancelled) console.error('[Home] fund-partners failed:', err)
+        if (!cancelled) setPartnersList([])
+      })
+      .finally(() => { if (!cancelled) setLoadingPartners(false) })
     return () => { cancelled = true }
   }, [])
 
@@ -282,7 +334,8 @@ export function Home() {
       <section id="campaigns" className={styles.sectionCampaigns}>
         <Container size="wide">
           <div className={styles.sectionHead}>
-            <h2 className={styles.sectionTitle}>{t('nav.campaigns')}</h2>
+            <h2 className={styles.sectionTitle}>{t('home.campaignsSectionTitle')}</h2>
+            <p className={styles.sectionSubtitle}>{t('campaigns.subtitle')}</p>
           </div>
           {loadingCampaigns ? (
             <div className={styles.loadingState}>
@@ -342,57 +395,210 @@ export function Home() {
         </Container>
       </section>
 
-      {/* Recent donations */}
-      <section className={styles.sectionDonations} aria-labelledby="recent-donations-heading">
+      {/* News section — من الباكند /fund-news */}
+      <section id="news" className={styles.sectionNews} aria-labelledby="news-heading" dir={isRtl ? 'rtl' : 'ltr'}>
+        <Container size="wide">
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionBadge}>{t('news.featured')}</span>
+            <h2 id="news-heading" className={styles.sectionTitle}>{t('nav.news')}</h2>
+            <p className={styles.sectionSubtitle}>{t('news.subtitle')}</p>
+          </div>
+          {loadingNews ? (
+            <div className={styles.newsGrid} aria-busy="true">
+              <article className={styles.newsCardFeatured}>
+                <div className={styles.newsCardImage} style={{ background: 'var(--gradient-dominant)' }} />
+                <div className={styles.newsCardContent}>
+                  <span className={styles.newsDate} />
+                  <span className={styles.newsCardTitle} style={{ width: '80%', height: '1.5em', background: 'var(--color-muted)', borderRadius: 4 }} />
+                  <span className={styles.newsExcerpt} style={{ display: 'block', width: '100%', height: '3em', background: 'var(--color-muted)', borderRadius: 4, marginTop: 8 }} />
+                </div>
+              </article>
+              {[1, 2, 3].map((i) => (
+                <article key={i} className={styles.newsCard}>
+                  <div className={styles.newsCardImageSmall} style={{ background: 'var(--color-muted)' }} />
+                  <div className={styles.newsCardContentSmall}>
+                    <span className={styles.newsDateSmall} />
+                    <span style={{ display: 'block', width: '90%', height: '1.2em', background: 'var(--color-muted)', borderRadius: 4 }} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : newsList.length === 0 ? (
+            <p className={styles.sectionSubtitle} style={{ marginTop: '1rem' }}>{t('news.noNews')}</p>
+          ) : (
+            <div className={styles.newsGrid}>
+              {newsList[0] && (() => {
+                const item = newsList[0]
+                const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
+                const contentKey = lang === 'ar' ? 'content_ar' : 'content_en'
+                const title = (item[titleKey as keyof FundNews] as string) || `#${item.id}`
+                const content = (item[contentKey as keyof FundNews] as string) || ''
+                const excerpt = stripHtml(content).slice(0, 120) + (stripHtml(content).length > 120 ? '…' : '')
+                const imgUrl = resolveImageUrl(item.image_url ?? item.image)
+                return (
+                  <Link to="/news" className={styles.newsCardFeatured} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className={styles.newsCardImage} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-dominant)' }}>
+                      {!imgUrl && (
+                        <span className={styles.newsCardIcon} aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg>
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.newsCardContent}>
+                      <time className={styles.newsDate} dateTime={item.published_at ?? ''}>{formatNewsDate(item.published_at, lang)}</time>
+                      <h3 className={styles.newsCardTitle}>{title}</h3>
+                      <p className={styles.newsExcerpt}>{excerpt}</p>
+                      <span className={styles.newsReadMore}>{lang === 'ar' ? 'اقرأ المزيد' : 'Read more'}</span>
+                    </div>
+                  </Link>
+                )
+              })()}
+              {newsList.length > 1 && (
+              <div className={styles.newsGridRest}>
+              {newsList.slice(1).map((item) => {
+                const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
+                const title = (item[titleKey as keyof FundNews] as string) || `#${item.id}`
+                const imgUrl = resolveImageUrl(item.image_url ?? item.image)
+                return (
+                  <Link key={item.id} to="/news" className={styles.newsCard} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className={styles.newsCardImageSmall} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-soft)' }}>
+                      {!imgUrl && (
+                        <span className={styles.newsCardIconSmall} aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83" /></svg>
+                        </span>
+                      )}
+                    </div>
+                    <div className={styles.newsCardContentSmall}>
+                      <time className={styles.newsDateSmall} dateTime={item.published_at ?? ''}>{formatNewsDate(item.published_at, lang)}</time>
+                      <h4 className={styles.newsCardTitleSmall}>{title}</h4>
+                    </div>
+                  </Link>
+                )
+              })}
+              </div>
+              )}
+            </div>
+          )}
+          {!loadingNews && newsList.length > 0 && (
+            <div className={styles.sectionFooter}>
+              <Link to="/news">
+                <Button variant="outline" size="lg">{t('home.viewAll')}</Button>
+              </Link>
+            </div>
+          )}
+        </Container>
+      </section>
+
+      {/* Recent donations — شريط بعرض الصفحة مع تمرير مستمر، قبل الشركاء */}
+      <section className={styles.sectionDonations} aria-labelledby="recent-donations-heading" dir={isRtl ? 'rtl' : 'ltr'}>
         <Container size="wide">
           <div className={styles.sectionHead}>
             <h2 id="recent-donations-heading" className={styles.sectionTitle}>{t('home.recentDonations')}</h2>
             <p className={styles.sectionSubtitle}>{t('home.recentDonationsSubtitle')}</p>
           </div>
           {loadingDonations ? (
-            <div className={styles.loadingState}>
+            <div className={styles.donationStripLoading}>
               <div className={styles.loadingDots} aria-hidden="true">
                 <span /><span /><span />
               </div>
-              <p className={styles.placeholderText}>{t('common.loading')}</p>
             </div>
           ) : recentDonations.length === 0 ? (
-            <div className={styles.donationEmpty}>
-              <span className={styles.donationEmptyIcon} aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-              </span>
-              <p className={styles.placeholderText}>—</p>
-            </div>
-          ) : (
-            <ul className={styles.donationList} role="list">
-              {recentDonations.map((d, i) => {
+            <p className={styles.donationStripEmpty}>{t('home.recentDonationsSubtitle')}</p>
+          ) : null}
+        </Container>
+        {!loadingDonations && recentDonations.length > 0 && (
+          <div className={styles.donationStripTrack} aria-hidden="true">
+            <ul className={styles.donationStripRow} role="list">
+              {[...recentDonations, ...recentDonations].map((d, i) => {
                 const donation = d as RecentDonation
-                const displayName = donation.donor_name?.trim() || t('home.anonymousDonor')
-                const initial = donation.donor_name?.trim()
-                  ? String(donation.donor_name).charAt(0).toUpperCase()
-                  : '♥'
                 const timeAgo = getTimeAgoKey(donation.created_at)
                 return (
-                  <li key={donation.id ?? i} className={styles.donationItem}>
-                    <span className={styles.donationAvatar} aria-hidden="true">{initial}</span>
-                    <div className={styles.donationContent}>
-                      <span className={styles.donationAmount}>
+                  <li key={`${donation.id ?? i}-${i}`} className={styles.donationStripItem}>
+                    <span className={styles.donationStripAvatar} aria-hidden="true">♥</span>
+                    <div className={styles.donationStripContent}>
+                      <span className={styles.donationStripAmount}>
                         {formatDonationAmount(donation.amount)} {t('donate.currencyShort', 'OMR')}
                       </span>
-                      <span className={styles.donationName}>{displayName}</span>
+                      <span className={styles.donationStripName}>{t('home.benefactorLabel')}</span>
                       {timeAgo.key !== 'home.timeAgoJustNow' && (
-                        <span className={styles.donationTime}>
+                        <span className={styles.donationStripTime}>
                           {t(timeAgo.key, { count: timeAgo.count ?? 0 })}
                         </span>
                       )}
                     </div>
-                    <span className={styles.donationBadge} aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-                    </span>
                   </li>
                 )
               })}
             </ul>
+          </div>
+        )}
+      </section>
+
+      {/* Partners section — من الباكند /fund-partners */}
+      <section id="partners" className={styles.sectionPartners} aria-labelledby="partners-heading" dir={isRtl ? 'rtl' : 'ltr'}>
+        <div className={styles.partnersBg} aria-hidden="true" />
+        <Container size="wide">
+          <div className={styles.sectionHead}>
+            <span className={`${styles.sectionBadge} ${styles.sectionBadgeLight}`}>{t('partners.featured')}</span>
+            <h2 id="partners-heading" className={styles.sectionTitlePartners}>{t('nav.partners')}</h2>
+            <p className={styles.sectionSubtitlePartners}>{t('partners.subtitle')}</p>
+          </div>
+          {loadingPartners ? (
+            <div className={styles.partnersTrack}>
+              <div className={styles.partnersRow}>
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={`skeleton-${i}`} className={styles.partnerLogoWrap}>
+                    <div className={styles.partnerLogo} style={{ background: 'var(--color-muted)' }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : partnersList.length === 0 ? (
+            <p className={styles.sectionSubtitlePartners} style={{ marginTop: '1rem' }}>{t('partners.noPartners')}</p>
+          ) : (
+            <div className={styles.partnersTrack}>
+              {/* صفان مكرران لحركة تمرير دائرية متصلة (بدون قفز) — الصف الثاني عكس الاتجاه */}
+              <div className={styles.partnersRow}>
+                {[...partnersList, ...partnersList].map((p, i) => {
+                  const nameKey = lang === 'ar' ? 'name_ar' : 'name_en'
+                  const name = (p[nameKey as keyof FundPartner] as string) || p.name_ar || p.name_en || `Partner ${p.id}`
+                  const logoUrl = resolveImageUrl(p.logo_url ?? p.logo)
+                  return (
+                    <div key={`row1-${p.id}-${i}`} className={styles.partnerLogoWrap}>
+                      {p.link ? (
+                        <a href={p.link} target="_blank" rel="noopener noreferrer" className={styles.partnerLogo} title={name}>
+                          {logoUrl ? <img src={logoUrl} alt={name} className={styles.partnerLogoImg} /> : <span className={styles.partnerLogoText}>{name}</span>}
+                        </a>
+                      ) : (
+                        <div className={styles.partnerLogo}>
+                          {logoUrl ? <img src={logoUrl} alt={name} className={styles.partnerLogoImg} /> : <span className={styles.partnerLogoText}>{name}</span>}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+              <div className={styles.partnersRow} aria-hidden="true">
+                {[...partnersList, ...partnersList].map((p, i) => {
+                  const nameKey = lang === 'ar' ? 'name_ar' : 'name_en'
+                  const name = (p[nameKey as keyof FundPartner] as string) || p.name_ar || p.name_en || `Partner ${p.id}`
+                  const logoUrl = resolveImageUrl(p.logo_url ?? p.logo)
+                  return (
+                    <div key={`row2-${p.id}-${i}`} className={styles.partnerLogoWrap}>
+                      {p.link ? (
+                        <a href={p.link} target="_blank" rel="noopener noreferrer" className={styles.partnerLogo} title={name}>
+                          {logoUrl ? <img src={logoUrl} alt={name} className={styles.partnerLogoImg} /> : <span className={styles.partnerLogoText}>{name}</span>}
+                        </a>
+                      ) : (
+                        <div className={styles.partnerLogo}>
+                          {logoUrl ? <img src={logoUrl} alt={name} className={styles.partnerLogoImg} /> : <span className={styles.partnerLogoText}>{name}</span>}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           )}
         </Container>
       </section>

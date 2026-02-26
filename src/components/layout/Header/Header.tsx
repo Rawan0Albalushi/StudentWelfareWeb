@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useLayoutEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Container } from '../../ui/Container'
@@ -15,6 +16,8 @@ export function Header() {
   const { user, logout, isAuthenticated, loading: authLoading } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userButtonRef = useRef<HTMLButtonElement>(null)
+  const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0, left: 0 })
 
   const isActive = (path: string) => (path === '/' ? location.pathname === '/' : location.pathname.startsWith(path))
   const isHome = location.pathname === '/'
@@ -36,6 +39,27 @@ export function Header() {
     setMenuOpen(false)
     navigate('/')
   }
+
+  useLayoutEffect(() => {
+    if (!userMenuOpen || !userButtonRef.current) return
+    const rect = userButtonRef.current.getBoundingClientRect()
+    setMenuPosition({
+      top: rect.bottom + 4,
+      right: window.innerWidth - rect.right,
+      left: rect.left,
+    })
+  }, [userMenuOpen])
+
+  useEffect(() => {
+    if (!userMenuOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setUserMenuOpen(false)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [userMenuOpen])
+
+  const isRtl = (i18n.language || '').startsWith('ar')
 
   return (
     <header className={`${styles.header} ${isHome ? styles.headerStraight : ''}`.trim()} role="banner">
@@ -87,33 +111,55 @@ export function Header() {
             {isAuthenticated && user ? (
               <div className={styles.userWrap}>
                 <button
+                  ref={userButtonRef}
                   type="button"
                   className={styles.userButton}
-                  onClick={() => setUserMenuOpen((o) => !o)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setUserMenuOpen((o) => !o)
+                  }}
                   aria-expanded={userMenuOpen}
+                  aria-haspopup="menu"
+                  aria-controls="user-menu"
+                  id="user-menu-button"
                 >
                   {user.name || user.phone || t('nav.profile')}
                 </button>
-                {userMenuOpen && (
-                  <>
-                    <div
-                      className={styles.userMenuBackdrop}
-                      role="presentation"
-                      onClick={() => setUserMenuOpen(false)}
-                    />
-                    <div className={styles.userMenu}>
-                      <Link to="/profile" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
-                        {t('nav.profile')}
-                      </Link>
-                      <Link to="/my-donations" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
-                        {t('nav.myDonations')}
-                      </Link>
-                      <button type="button" onClick={handleLogout} disabled={authLoading}>
-                        {t('nav.logout')}
-                      </button>
-                    </div>
-                  </>
-                )}
+                {userMenuOpen &&
+                  createPortal(
+                    <>
+                      <div
+                        className={styles.userMenuBackdrop}
+                        role="presentation"
+                        onClick={() => setUserMenuOpen(false)}
+                      />
+                      <div
+                        id="user-menu"
+                        className={styles.userMenu}
+                        role="menu"
+                        aria-labelledby="user-menu-button"
+                        dir={isRtl ? 'rtl' : 'ltr'}
+                        style={{
+                          position: 'fixed',
+                          top: menuPosition.top,
+                          ...(isRtl ? { left: menuPosition.left, right: 'auto' } : { right: menuPosition.right, left: 'auto' }),
+                          marginTop: 0,
+                        }}
+                      >
+                        <Link to="/profile" role="menuitem" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
+                          {t('nav.profile')}
+                        </Link>
+                        <Link to="/my-donations" role="menuitem" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
+                          {t('nav.myDonations')}
+                        </Link>
+                        <button type="button" role="menuitem" onClick={handleLogout} disabled={authLoading}>
+                          {t('nav.logout')}
+                        </button>
+                      </div>
+                    </>,
+                    document.body
+                  )}
               </div>
             ) : (
               <>

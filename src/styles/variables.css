@@ -113,4 +113,11 @@
   --transition-normal: 250ms ease;
 }
 
+/* هيدر أصغر على الشاشات الصغيرة والهواتف */
+@media (max-width: 767px) {
+  :root {
+    --header-height: 3.75rem;
+  }
+}
+
 /* RTL: no color change; direction handled by dir attribute and logical CSS */
