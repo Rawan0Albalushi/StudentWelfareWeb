@@ -207,12 +207,12 @@
   font-size: var(--text-xl);
   font-weight: 700;
   margin: 0 0 var(--space-2);
-  color: var(--color-text);
+  color: white;
 }
 
 .ctaSubtext {
   font-size: var(--text-base);
-  color: var(--color-text-muted);
+  color: white;
   margin: 0 0 var(--space-6);
   line-height: var(--line-height-relaxed);
 }

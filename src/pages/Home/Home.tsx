@@ -20,6 +20,9 @@ import styles from './Home.module.css'
 const FALLBACK_CARD_DESC_AR = 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
 const FALLBACK_CARD_DESC_EN = 'Register your application for student support programs. Complete your details and upload required documents.'
 
+/** إخفاء قسم آخر التبرعات من الصفحة الرئيسية */
+const SHOW_RECENT_DONATIONS = false
+
 function formatNewsDate(isoDate: string | undefined, locale: string): string {
   if (!isoDate) return ''
   try {
@@ -100,6 +103,7 @@ export function Home() {
   }, [])
 
   useEffect(() => {
+    if (!SHOW_RECENT_DONATIONS) return
     let cancelled = false
     donationService
       .getRecent(10)
@@ -193,10 +197,11 @@ export function Home() {
   }, [isAuthenticated])
 
   const regStatus = myRegistration && typeof myRegistration.status === 'string' ? String(myRegistration.status).toLowerCase() : ''
+  const isRegisteredInFund = Boolean(isAuthenticated && myRegistration)
   const statusLabel =
-    isAuthenticated && myRegistration && regStatus
+    isRegisteredInFund && regStatus
       ? (t(`studentRegistration.status_${regStatus}`) !== `studentRegistration.status_${regStatus}` ? t(`studentRegistration.status_${regStatus}`) : t('studentRegistration.status_pending'))
-      : isAuthenticated
+      : isRegisteredInFund
         ? t('home.ctaRequestStatus')
         : t('home.ctaStartRegistration')
   const statusClass =
@@ -479,6 +484,8 @@ export function Home() {
         </Container>
       </section>
 
+      {SHOW_RECENT_DONATIONS && (
+      <>
       {/* Recent donations — شريط بعرض الصفحة مع تمرير مستمر، قبل الشركاء */}
       <section className={styles.sectionDonations} aria-labelledby="recent-donations-heading" dir={isRtl ? 'rtl' : 'ltr'}>
         <Container size="wide">
@@ -523,6 +530,8 @@ export function Home() {
           </div>
         )}
       </section>
+      </>
+      )}
 
       {/* Partners section — من الباكند /fund-partners */}
       <section id="partners" className={styles.sectionPartners} aria-labelledby="partners-heading" dir={isRtl ? 'rtl' : 'ltr'}>
