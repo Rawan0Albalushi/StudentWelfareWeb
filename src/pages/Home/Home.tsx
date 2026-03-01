@@ -50,8 +50,6 @@ export function Home() {
   const [partnersList, setPartnersList] = useState<FundPartner[]>([])
   const [loadingCampaigns, setLoadingCampaigns] = useState(true)
   const [loadingDonations, setLoadingDonations] = useState(true)
-  const [loadingHeroCard, setLoadingHeroCard] = useState(true)
-  const [loadingBanners, setLoadingBanners] = useState(true)
   const [loadingNews, setLoadingNews] = useState(true)
   const [loadingPartners, setLoadingPartners] = useState(true)
   const [bannerIndex, setBannerIndex] = useState(0)
@@ -125,7 +123,7 @@ export function Home() {
       .getCard()
       .then((card) => { if (!cancelled) setRegistrationCard(card ?? null) })
       .catch(() => { if (!cancelled) setRegistrationCard(null) })
-      .finally(() => { if (!cancelled) setLoadingHeroCard(false) })
+      .finally(() => {})
     return () => { cancelled = true }
   }, [])
 
@@ -139,7 +137,7 @@ export function Home() {
         if (!cancelled) console.error('[Home] banners/featured failed:', err)
         if (!cancelled) setBanners([])
       })
-      .finally(() => { if (!cancelled) setLoadingBanners(false) })
+      .finally(() => {})
     return () => { cancelled = true }
   }, [])
 
@@ -436,7 +434,7 @@ export function Home() {
                 const excerpt = stripHtml(content).slice(0, 120) + (stripHtml(content).length > 120 ? '…' : '')
                 const imgUrl = resolveImageUrl(item.image_url ?? item.image)
                 return (
-                  <Link to="/news" className={styles.newsCardFeatured} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <article className={styles.newsCardFeatured}>
                     <div className={styles.newsCardImage} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-dominant)' }}>
                       {!imgUrl && (
                         <span className={styles.newsCardIcon} aria-hidden="true">
@@ -448,9 +446,8 @@ export function Home() {
                       <time className={styles.newsDate} dateTime={item.published_at ?? ''}>{formatNewsDate(item.published_at, lang)}</time>
                       <h3 className={styles.newsCardTitle}>{title}</h3>
                       <p className={styles.newsExcerpt}>{excerpt}</p>
-                      <span className={styles.newsReadMore}>{lang === 'ar' ? 'اقرأ المزيد' : 'Read more'}</span>
                     </div>
-                  </Link>
+                  </article>
                 )
               })()}
               {newsList.length > 1 && (
@@ -460,7 +457,7 @@ export function Home() {
                 const title = (item[titleKey as keyof FundNews] as string) || `#${item.id}`
                 const imgUrl = resolveImageUrl(item.image_url ?? item.image)
                 return (
-                  <Link key={item.id} to="/news" className={styles.newsCard} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <article key={item.id} className={styles.newsCard}>
                     <div className={styles.newsCardImageSmall} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-soft)' }}>
                       {!imgUrl && (
                         <span className={styles.newsCardIconSmall} aria-hidden="true">
@@ -472,18 +469,11 @@ export function Home() {
                       <time className={styles.newsDateSmall} dateTime={item.published_at ?? ''}>{formatNewsDate(item.published_at, lang)}</time>
                       <h4 className={styles.newsCardTitleSmall}>{title}</h4>
                     </div>
-                  </Link>
+                  </article>
                 )
               })}
               </div>
               )}
-            </div>
-          )}
-          {!loadingNews && newsList.length > 0 && (
-            <div className={styles.sectionFooter}>
-              <Link to="/news">
-                <Button variant="outline" size="lg">{t('home.viewAll')}</Button>
-              </Link>
             </div>
           )}
         </Container>

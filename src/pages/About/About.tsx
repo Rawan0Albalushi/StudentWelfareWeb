@@ -79,7 +79,7 @@ export function About() {
               {t('about.ctaTitle')}
             </h2>
             <p className={styles.ctaSubtext}>{t('about.ctaSubtext')}</p>
-            <Link to="/donate" className={styles.ctaButton}>
+            <Link to="/campaigns" className={styles.ctaButton}>
               {t('about.ctaButton')}
             </Link>
           </div>

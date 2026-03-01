@@ -49,7 +49,7 @@ export function PaymentReturn() {
       return
     }
     const isSuccess = result === 'success'
-    const confirmPayload = { session_id: sessionId, donation_id: donationId }
+    const confirmPayload = { session_id: sessionId ?? undefined, donation_id: donationId }
     if ((isSuccess || sessionId) && (sessionId || donationId)) {
       paymentService
         .confirm(confirmPayload)
@@ -107,7 +107,7 @@ export function PaymentReturn() {
               </div>
               <h2 className={styles.title}>{t('donate.paymentCancelled')}</h2>
               <div className={styles.actions}>
-                <Link to="/donate">
+                <Link to="/campaigns">
                   <Button size="lg">{t('donate.title')}</Button>
                 </Link>
               </div>
@@ -120,7 +120,7 @@ export function PaymentReturn() {
               </div>
               <h2 className={styles.title}>{errorMessage || t('donate.error')}</h2>
               <div className={styles.actions}>
-                <Link to="/donate">
+                <Link to="/campaigns">
                   <Button variant="outline" size="lg">{t('common.retry')}</Button>
                 </Link>
               </div>

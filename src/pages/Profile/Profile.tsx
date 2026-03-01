@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
@@ -9,14 +7,7 @@ import styles from './Profile.module.css'
 
 export function Profile() {
   const { t } = useTranslation('common')
-  const navigate = useNavigate()
-  const { user, isAuthenticated, checked } = useAuth()
-
-  useEffect(() => {
-    if (checked && !isAuthenticated) navigate('/login', { replace: true })
-  }, [checked, isAuthenticated, navigate])
-
-  if (!checked || !isAuthenticated) return null
+  const { user } = useAuth()
 
   return (
     <PageLayout>

@@ -6,12 +6,14 @@ import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 import { useAuth } from '../../context/AuthContext'
-import { ApiError } from '../../services/apiClient'
+import { useErrorToast } from '../../context/ErrorContext'
+import { getApiErrorMessage } from '../../services/apiClient'
 import styles from '../Auth.module.css'
 
 export function Register() {
   const { t } = useTranslation('common')
   const { register, loading } = useAuth()
+  const { showError } = useErrorToast()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -41,10 +43,9 @@ export function Register() {
       })
       navigate('/', { replace: true })
     } catch (err) {
-      const msg = err instanceof ApiError && err.data && typeof err.data === 'object' && (err.data as { message?: string }).message
-        ? (err.data as { message: string }).message
-        : err instanceof Error ? err.message : t('common.error')
+      const msg = getApiErrorMessage(err, t('common.error'))
       setError(msg)
+      showError(msg, 'error')
     }
   }
 

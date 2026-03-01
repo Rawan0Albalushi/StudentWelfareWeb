@@ -174,11 +174,22 @@ export const api = {
 }
 
 export class ApiError extends Error {
-  constructor(
-    public status: number,
-    public data: unknown
-  ) {
+  status: number
+  data: unknown
+  constructor(status: number, data: unknown) {
     super(`API error ${status}`)
     this.name = 'ApiError'
+    this.status = status
+    this.data = data
   }
+}
+
+/** Extract user-facing message from ApiError or Error. Use with useErrorToast().showError(). */
+export function getApiErrorMessage(err: unknown, fallback?: string): string {
+  const msg = fallback ?? 'حدث خطأ'
+  if (err instanceof ApiError && err.data && typeof err.data === 'object' && (err.data as { message?: string }).message) {
+    return (err.data as { message: string }).message
+  }
+  if (err instanceof Error && err.message) return err.message
+  return msg
 }

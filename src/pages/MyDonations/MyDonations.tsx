@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
 import { Card, CardContent } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { donationService } from '../../services/donationService'
-import { useAuth } from '../../context/AuthContext'
 import type { RecentDonation } from '../../types/api'
 import styles from './MyDonations.module.css'
 
@@ -32,14 +31,8 @@ function formatAmount(amount?: number): string {
 
 export function MyDonations() {
   const { t, i18n } = useTranslation('common')
-  const navigate = useNavigate()
-  const { isAuthenticated, checked } = useAuth()
   const [list, setList] = useState<RecentDonation[]>([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (checked && !isAuthenticated) navigate('/login', { replace: true })
-  }, [checked, isAuthenticated, navigate])
 
   useEffect(() => {
     let cancelled = false
@@ -56,8 +49,6 @@ export function MyDonations() {
 
   const total = list.reduce((sum, d) => sum + (Number((d as RecentDonation).amount) || 0), 0)
   const locale = i18n.language || 'ar'
-
-  if (!checked || !isAuthenticated) return null
 
   return (
     <PageLayout>
@@ -85,7 +76,7 @@ export function MyDonations() {
             </div>
             <h2 className={styles.emptyTitle}>{t('myDonations.emptyTitle')}</h2>
             <p className={styles.emptyDescription}>{t('myDonations.emptyDescription')}</p>
-            <Link to="/donate">
+            <Link to="/campaigns">
               <Button size="lg" className={styles.emptyCta}>
                 {t('myDonations.ctaDonate')}
               </Button>

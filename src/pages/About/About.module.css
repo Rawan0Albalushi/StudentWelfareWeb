@@ -3,7 +3,7 @@
   background: var(--gradient-soft);
   padding-block: var(--space-10) var(--space-8);
   padding-inline: var(--space-4);
-  margin-block-end: var(--space-8);
+  margin-block-end: var(--space-10);
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
   box-shadow: var(--shadow-sm);
 }
@@ -26,7 +26,7 @@
 }
 
 .main {
-  padding-block-end: var(--space-12);
+  padding-block: var(--space-10) var(--space-10);
 }
 
 /* ========== Intro ========== */
@@ -54,6 +54,15 @@
   .missionVision {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-8);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pageHeader {
+    margin-block-end: var(--space-12);
+  }
+  .main {
+    padding-block: var(--space-12) var(--space-12);
   }
 }
 

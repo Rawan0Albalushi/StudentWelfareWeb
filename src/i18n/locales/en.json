@@ -66,7 +66,7 @@
     "amount": "Amount (OMR)",
   "currencyShort": "OMR",
   "quickAmounts": "Quick amounts",
-    "phone": "Phone number (optional)",
+    "phone": "Phone number (required)",
     "phonePlaceholder": "e.g. 91234567",
     "anonymous": "Donate anonymously",
     "note": "Message (optional)",
@@ -135,6 +135,7 @@
     "submitRegister": "Create account",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
+    "loginRequired": "Please log in to continue",
     "otpVerify": "Enter verification code",
     "resendOtp": "Resend code"
   },
@@ -205,6 +206,7 @@
   },
   "common": {
     "loading": "Loading...",
+    "checkingAuth": "Checking authentication...",
     "error": "Error",
     "retry": "Retry",
     "save": "Save",

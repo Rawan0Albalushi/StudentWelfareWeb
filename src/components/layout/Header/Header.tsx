@@ -25,9 +25,7 @@ export function Header() {
   const navItems = [
     { to: '/', label: t('nav.home') },
     { to: '/campaigns', label: t('nav.campaigns') },
-    ...(isAuthenticated
-      ? [{ to: '/my-donations', label: t('nav.myDonations') }]
-      : [{ to: '/donate', label: t('nav.donate') }]),
+    ...(isAuthenticated ? [{ to: '/my-donations', label: t('nav.myDonations') }] : []),
     { to: '/news', label: t('nav.news') },
     { to: '/partners', label: t('nav.partners') },
     { to: '/about', label: t('nav.about') },
@@ -124,7 +122,7 @@ export function Header() {
                   aria-controls="user-menu"
                   id="user-menu-button"
                 >
-                  {user.name || user.phone || t('nav.profile')}
+                  {user.name || user.phone || t('nav.myDonations')}
                 </button>
                 {userMenuOpen &&
                   createPortal(
@@ -147,9 +145,6 @@ export function Header() {
                           marginTop: 0,
                         }}
                       >
-                        <Link to="/profile" role="menuitem" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
-                          {t('nav.profile')}
-                        </Link>
                         <Link to="/my-donations" role="menuitem" onClick={() => { setMenuOpen(false); setUserMenuOpen(false); }}>
                           {t('nav.myDonations')}
                         </Link>

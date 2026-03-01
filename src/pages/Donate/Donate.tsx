@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
@@ -20,8 +20,16 @@ export function Donate() {
   const { t, i18n } = useTranslation('common')
   const { isAuthenticated, user, refreshProfile } = useAuth()
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const campaignIdParam = searchParams.get('campaign_id')
   const programIdParam = searchParams.get('program_id')
+
+  // التبرع يكون فقط من خلال اختيار حملة أو برنامج — إعادة توجيه الصفحة العامة إلى الحملات
+  useEffect(() => {
+    if (!campaignIdParam && !programIdParam) {
+      navigate('/campaigns', { replace: true })
+    }
+  }, [campaignIdParam, programIdParam, navigate])
 
   const [campaigns, setCampaigns] = useState<CampaignOrProgram[]>([])
   const [programs, setPrograms] = useState<CampaignOrProgram[]>([])
@@ -127,6 +135,10 @@ export function Donate() {
       setError(t('donate.amount') + ' required')
       return
     }
+    if (!isAuthenticated && !donorPhone.trim()) {
+      setError(`${t('donate.phone')} ${t('common.required')}`)
+      return
+    }
     const id = selectedId ? parseInt(selectedId, 10) : undefined
     setSubmitting(true)
     try {
@@ -137,11 +149,12 @@ export function Donate() {
       const body = {
         amount: numAmount,
         return_origin: returnOrigin,
+        is_anonymous: false,
         ...(phoneForDonation ? { donor_phone: phoneForDonation } : {}),
         ...(selectedType === 'campaign' && id ? { campaign_id: id } : {}),
         ...(selectedType === 'program' && id ? { program_id: id } : {}),
       }
-      const anonymousBody = !isAuthenticated ? { ...body, donor_name: 'متبرع' } : body
+      const anonymousBody = !isAuthenticated ? { ...body, is_anonymous: true, donor_name: 'متبرع' } : body
       let res: Awaited<ReturnType<typeof donationService.createWithPayment>>
       try {
         res = isAuthenticated
@@ -182,6 +195,10 @@ export function Donate() {
     } finally {
       setSubmitting(false)
     }
+  }
+
+  if (!campaignIdParam && !programIdParam) {
+    return null
   }
 
   if (loading && options.length === 0) {
@@ -321,6 +338,7 @@ export function Donate() {
                       onChange={(e) => setDonorPhone(e.target.value)}
                       placeholder={t('donate.phonePlaceholder')}
                       disabled={submitting}
+                      required
                     />
                   </label>
                 </section>

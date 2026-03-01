@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.spinner {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 9999px;
+  animation: authGateSpin 0.7s linear infinite;
+}
+
+@keyframes authGateSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

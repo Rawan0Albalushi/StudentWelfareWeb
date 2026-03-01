@@ -1,20 +1,24 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
 import { Card, CardContent } from '../../components/ui/Card'
 import { useAuth } from '../../context/AuthContext'
-import { ApiError } from '../../services/apiClient'
+import { useErrorToast } from '../../context/ErrorContext'
+import { getApiErrorMessage } from '../../services/apiClient'
 import styles from '../Auth.module.css'
 
 export function Login() {
   const { t } = useTranslation('common')
   const { login, loading } = useAuth()
+  const { showError } = useErrorToast()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
-  const returnUrl = searchParams.get('returnUrl') || '/'
+  const from = (location.state as { from?: { pathname: string; search?: string } })?.from
+  const returnUrl = searchParams.get('returnUrl') || (from ? from.pathname + (from.search ?? '') : '') || '/'
   const [phone, setPhone] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -30,10 +34,9 @@ export function Login() {
       await login(phone.trim(), password)
       navigate(returnUrl, { replace: true })
     } catch (err) {
-      const msg = err instanceof ApiError && err.data && typeof err.data === 'object' && (err.data as { message?: string }).message
-        ? (err.data as { message: string }).message
-        : err instanceof Error ? err.message : t('common.error')
+      const msg = getApiErrorMessage(err, t('common.error'))
       setError(msg)
+      showError(msg, 'error')
     }
   }
 

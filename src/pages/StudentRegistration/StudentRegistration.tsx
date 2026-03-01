@@ -346,7 +346,7 @@ export function StudentRegistration() {
                 <Link to="/">
                   <Button variant="primary" size="lg">{t('studentRegistration.backHome')}</Button>
                 </Link>
-                <Link to="/profile" className={styles.backLinkBlock}>{t('nav.profile')}</Link>
+                <Link to="/my-donations" className={styles.backLinkBlock}>{t('nav.myDonations')}</Link>
               </div>
             </div>
           </Container>
@@ -378,7 +378,7 @@ export function StudentRegistration() {
               <p className={styles.successMessage}>{t('studentRegistration.successMessage')}</p>
               <p className={styles.successNextSteps}>{t('studentRegistration.successNextSteps')}</p>
               <div className={styles.successActions}>
-                <Link to="/profile">
+                <Link to="/">
                   <Button variant="primary" size="lg">{t('studentRegistration.viewMyRegistration')}</Button>
                 </Link>
                 <Link to="/" className={styles.successBackLink}>{t('studentRegistration.backHome')}</Link>

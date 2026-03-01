@@ -35,7 +35,7 @@ export const authService = {
 
   async logout(): Promise<void> {
     try {
-      await authApi.post('/auth/logout')
+      await authApi.post('/auth/logout', {})
     } finally {
       clearToken()
     }

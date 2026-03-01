@@ -66,7 +66,7 @@
     "amount": "المبلغ (ر.ع)",
   "currencyShort": "ر.ع",
   "quickAmounts": "مبالغ سريعة",
-    "phone": "رقم الهاتف (اختياري)",
+    "phone": "رقم الهاتف (إجباري)",
     "phonePlaceholder": "مثال: 91234567",
     "anonymous": "تبرع بدون ذكر الاسم",
     "note": "رسالة (اختياري)",
@@ -135,6 +135,7 @@
     "submitRegister": "إنشاء الحساب",
     "noAccount": "ليس لديك حساب؟",
     "hasAccount": "لديك حساب؟",
+    "loginRequired": "يجب تسجيل الدخول للمتابعة",
     "otpVerify": "أدخل رمز التحقق",
     "resendOtp": "إعادة إرسال الرمز"
   },
@@ -205,6 +206,7 @@
   },
   "common": {
     "loading": "جاري التحميل...",
+    "checkingAuth": "جاري التحقق...",
     "error": "خطأ",
     "retry": "إعادة المحاولة",
     "save": "حفظ",
