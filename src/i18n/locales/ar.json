@@ -74,7 +74,11 @@
     "success": "شكراً لتبرعك",
     "successSubtext": "تم استلام تبرعك وسيُستخدم لدعم الطلاب",
     "error": "حدث خطأ، حاول مرة أخرى",
-    "paymentCancelled": "تم إلغاء العملية"
+    "paymentCancelled": "تم إلغاء العملية",
+    "shareCampaign": "شارك الحملة",
+    "shareVia": "شارك عبر",
+    "copyLink": "نسخ الرابط",
+    "copied": "تم النسخ"
   },
   "myDonations": {
     "title": "تبرعاتي",
@@ -220,6 +224,7 @@
   },
   "footer": {
     "about": "عن الصندوق",
+    "contactVia": "تواصل معنا عبر",
     "contact": "تواصل معنا",
     "terms": "الشروط",
     "privacy": "الخصوصية",

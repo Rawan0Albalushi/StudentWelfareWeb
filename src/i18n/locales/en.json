@@ -74,7 +74,11 @@
     "success": "Thank you for your donation",
     "successSubtext": "Your donation has been received and will support students",
     "error": "Something went wrong, please try again",
-    "paymentCancelled": "Payment was cancelled"
+    "paymentCancelled": "Payment was cancelled",
+    "shareCampaign": "Share campaign",
+    "shareVia": "Share via",
+    "copyLink": "Copy link",
+    "copied": "Copied"
   },
   "myDonations": {
     "title": "My Donations",
@@ -220,6 +224,7 @@
   },
   "footer": {
     "about": "About",
+    "contactVia": "Contact us via",
     "contact": "Contact",
     "terms": "Terms",
     "privacy": "Privacy",

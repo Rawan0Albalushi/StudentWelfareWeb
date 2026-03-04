@@ -74,6 +74,50 @@
   opacity: 0.9;
 }
 
+.contactSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contactLabel {
+  font-size: var(--text-sm);
+  opacity: 0.9;
+}
+
+.contactLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md, 6px);
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.2s, color 0.2s;
+}
+
+.contactLink:hover {
+  background: rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+}
+
+.contactLink .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contactLink .icon svg {
+  display: block;
+}
+
 .links {
   display: flex;
   flex-wrap: wrap;
