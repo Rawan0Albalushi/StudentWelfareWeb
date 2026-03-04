@@ -141,7 +141,10 @@
     "hasAccount": "لديك حساب؟",
     "loginRequired": "يجب تسجيل الدخول للمتابعة",
     "otpVerify": "أدخل رمز التحقق",
-    "resendOtp": "إعادة إرسال الرمز"
+    "otpSent": "تم إرسال رمز التحقق إلى {{phone}}",
+    "verifyCode": "تحقق",
+    "resendOtp": "إعادة إرسال الرمز",
+    "devOtp": "الحصول على الرمز (تطوير)"
   },
   "studentRegistration": {
     "title": "تسجيل طالب",

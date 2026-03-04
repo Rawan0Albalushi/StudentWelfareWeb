@@ -84,6 +84,17 @@ function parseJson<T>(res: Response): Promise<T> {
 }
 
 export const authApi = {
+  async get<T = unknown>(path: string, options?: { params?: Record<string, string | number> }): Promise<T> {
+    if (!API_AUTH_URL) throw new Error('VITE_API_URL is not set')
+    const res = await request(API_AUTH_URL, path, {
+      method: 'GET',
+      params: options?.params,
+    })
+    const data = await parseJson<T>(res)
+    if (!res.ok) throw new ApiError(res.status, data)
+    return data
+  },
+
   async post<T = unknown>(path: string, body: unknown): Promise<T> {
     if (!API_AUTH_URL) throw new Error('VITE_API_URL is not set')
     const res = await request(API_AUTH_URL, path, {

@@ -141,7 +141,10 @@
     "hasAccount": "Already have an account?",
     "loginRequired": "Please log in to continue",
     "otpVerify": "Enter verification code",
-    "resendOtp": "Resend code"
+    "otpSent": "We sent a verification code to {{phone}}",
+    "verifyCode": "Verify",
+    "resendOtp": "Resend code",
+    "devOtp": "Get code (dev)"
   },
   "studentRegistration": {
     "title": "Student Registration",

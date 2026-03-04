@@ -9,15 +9,20 @@ interface AuthState {
   checked: boolean
 }
 
+type RegisterBody = {
+  phone: string
+  password: string
+  password_confirmation: string
+  name: string
+  email?: string
+}
+
 interface AuthContextValue extends AuthState {
   login: (phone: string, password: string) => Promise<void>
-  register: (body: {
-    phone: string
-    password: string
-    password_confirmation: string
-    name: string
-    email?: string
-  }) => Promise<void>
+  register: (body: RegisterBody) => Promise<void>
+  registerWithPhone: (body: RegisterBody) => Promise<{ verifyId: string; phone?: string }>
+  verifyOtp: (verifyId: string, verifyCode: string) => Promise<void>
+  resendOtp: (phone: string) => Promise<{ verifyId: string; phone?: string }>
   logout: () => Promise<void>
   refreshProfile: () => Promise<void>
   isAuthenticated: boolean
@@ -63,13 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refreshProfile])
 
   const register = useCallback(
-    async (body: {
-      phone: string
-      password: string
-      password_confirmation: string
-      name: string
-      email?: string
-    }) => {
+    async (body: RegisterBody) => {
       setState((s) => ({ ...s, loading: true }))
       try {
         await authService.register(body)
@@ -80,6 +79,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [refreshProfile]
   )
+
+  const registerWithPhone = useCallback(async (body: RegisterBody) => {
+    setState((s) => ({ ...s, loading: true }))
+    try {
+      return await authService.registerWithPhone(body)
+    } finally {
+      setState((s) => ({ ...s, loading: false }))
+    }
+  }, [])
+
+  const verifyOtp = useCallback(
+    async (verifyId: string, verifyCode: string) => {
+      setState((s) => ({ ...s, loading: true }))
+      try {
+        await authService.verifyOtp(verifyId, verifyCode)
+        await refreshProfile()
+      } finally {
+        setState((s) => ({ ...s, loading: false }))
+      }
+    },
+    [refreshProfile]
+  )
+
+  const resendOtp = useCallback(async (phone: string) => {
+    setState((s) => ({ ...s, loading: true }))
+    try {
+      return await authService.resendOtp(phone)
+    } finally {
+      setState((s) => ({ ...s, loading: false }))
+    }
+  }, [])
 
   const logout = useCallback(async () => {
     setState((s) => ({ ...s, loading: true }))
@@ -95,6 +125,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ...state,
     login,
     register,
+    registerWithPhone,
+    verifyOtp,
+    resendOtp,
     logout,
     refreshProfile,
     isAuthenticated: !!state.user || authService.isAuthenticated(),
