@@ -9,6 +9,7 @@
   /* خلفية خفيفة للتركيز والأزرار الثانوية (مناسب للويب) */
   --color-primary-tint: rgba(160, 32, 126, 0.12);
   --color-primary-tint-hover: rgba(160, 32, 126, 0.2);
+  --color-primary-rgb: 160, 32, 126;
 
   /* الألوان الثانوية (Secondary – أزرق) */
   --color-secondary: #2DAAE2;

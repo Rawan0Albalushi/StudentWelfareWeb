@@ -408,20 +408,13 @@ export function Home() {
           </div>
           {loadingNews ? (
             <div className={styles.newsGrid} aria-busy="true">
-              <article className={styles.newsCardFeatured}>
-                <div className={styles.newsCardImage} style={{ background: 'var(--gradient-dominant)' }} />
-                <div className={styles.newsCardContent}>
-                  <span className={styles.newsDate} />
-                  <span className={styles.newsCardTitle} style={{ width: '80%', height: '1.5em', background: 'var(--color-muted)', borderRadius: 4 }} />
-                  <span className={styles.newsExcerpt} style={{ display: 'block', width: '100%', height: '3em', background: 'var(--color-muted)', borderRadius: 4, marginTop: 8 }} />
-                </div>
-              </article>
-              {[1, 2, 3].map((i) => (
-                <article key={i} className={styles.newsCard}>
-                  <div className={styles.newsCardImageSmall} style={{ background: 'var(--color-muted)' }} />
-                  <div className={styles.newsCardContentSmall}>
-                    <span className={styles.newsDateSmall} />
-                    <span style={{ display: 'block', width: '90%', height: '1.2em', background: 'var(--color-muted)', borderRadius: 4 }} />
+              {[1, 2, 3, 4].map((i) => (
+                <article key={i} className={styles.newsCardFeatured}>
+                  <div className={styles.newsCardImage} style={{ background: 'var(--gradient-dominant)' }} />
+                  <div className={styles.newsCardContent}>
+                    <span className={styles.newsDate} />
+                    <span className={styles.newsCardTitle} style={{ width: '80%', height: '1.5em', background: 'var(--color-muted)', borderRadius: 4 }} />
+                    <span className={styles.newsExcerpt} style={{ display: 'block', width: '100%', height: '3em', background: 'var(--color-muted)', borderRadius: 4, marginTop: 8 }} />
                   </div>
                 </article>
               ))}
@@ -430,8 +423,7 @@ export function Home() {
             <p className={styles.sectionSubtitle} style={{ marginTop: '1rem' }}>{t('news.noNews')}</p>
           ) : (
             <div className={styles.newsGrid}>
-              {newsList[0] && (() => {
-                const item = newsList[0]
+              {newsList.map((item) => {
                 const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
                 const contentKey = lang === 'ar' ? 'content_ar' : 'content_en'
                 const title = (item[titleKey as keyof FundNews] as string) || `#${item.id}`
@@ -439,8 +431,11 @@ export function Home() {
                 const excerpt = stripHtml(content).slice(0, 120) + (stripHtml(content).length > 120 ? '…' : '')
                 const imgUrl = resolveImageUrl(item.image_url ?? item.image)
                 return (
-                  <article className={styles.newsCardFeatured}>
+                  <article key={item.id} className={styles.newsCardFeatured}>
                     <div className={styles.newsCardImage} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-dominant)' }}>
+                      {item.is_featured && (
+                        <span className={styles.newsCardBadgeFeatured}>{t('news.featured')}</span>
+                      )}
                       {!imgUrl && (
                         <span className={styles.newsCardIcon} aria-hidden="true">
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg>
@@ -454,31 +449,7 @@ export function Home() {
                     </div>
                   </article>
                 )
-              })()}
-              {newsList.length > 1 && (
-              <div className={styles.newsGridRest}>
-              {newsList.slice(1).map((item) => {
-                const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
-                const title = (item[titleKey as keyof FundNews] as string) || `#${item.id}`
-                const imgUrl = resolveImageUrl(item.image_url ?? item.image)
-                return (
-                  <article key={item.id} className={styles.newsCard}>
-                    <div className={styles.newsCardImageSmall} style={imgUrl ? { backgroundImage: `url(${imgUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: 'var(--gradient-soft)' }}>
-                      {!imgUrl && (
-                        <span className={styles.newsCardIconSmall} aria-hidden="true">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83" /></svg>
-                        </span>
-                      )}
-                    </div>
-                    <div className={styles.newsCardContentSmall}>
-                      <time className={styles.newsDateSmall} dateTime={item.published_at ?? ''}>{formatNewsDate(item.published_at, lang)}</time>
-                      <h4 className={styles.newsCardTitleSmall}>{title}</h4>
-                    </div>
-                  </article>
-                )
               })}
-              </div>
-              )}
             </div>
           )}
         </Container>

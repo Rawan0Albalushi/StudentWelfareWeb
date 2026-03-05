@@ -59,10 +59,9 @@ export function Partners() {
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className={styles.skeletonCard}>
                 <div className={styles.skeletonLogo} />
-                <div className={styles.skeletonContent}>
+                <div className={styles.skeletonMeta}>
                   <div className={styles.skeletonLine} />
-                  <div className={styles.skeletonLine} style={{ width: '80%' }} />
-                  <div className={styles.skeletonLine} style={{ width: '60%' }} />
+                  <div className={styles.skeletonLine} style={{ width: '70%' }} />
                 </div>
               </div>
             ))}
@@ -88,45 +87,66 @@ export function Partners() {
               const link = item.link
               const displayUrl = getDisplayUrl(link)
 
-              return (
-                <Card key={item.id} className={styles.card}>
-                  <CardContent className={styles.cardContent}>
-                    <div className={styles.logoWrap}>
-                      {logoUrl ? (
-                        <img
-                          src={resolveImageUrl(logoUrl)}
-                          alt=""
-                          className={styles.logo}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className={styles.logoPlaceholder} aria-hidden>
-                          <span className={styles.logoPlaceholderText}>
-                            {name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                      {item.is_featured && (
-                        <span className={styles.featuredBadge}>{t('partners.featured')}</span>
-                      )}
-                    </div>
+              const content = (
+                <>
+                  <div className={styles.logoWrap}>
+                    {logoUrl ? (
+                      <img
+                        src={resolveImageUrl(logoUrl)}
+                        alt=""
+                        className={styles.logo}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className={styles.logoPlaceholder} aria-hidden>
+                        <span className={styles.logoPlaceholderText}>
+                          {name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
+                    {item.is_featured && (
+                      <span className={styles.featuredBadge}>{t('partners.featured')}</span>
+                    )}
+                  </div>
+                  <div className={styles.cardMeta}>
                     <h2 className={styles.name}>{name}</h2>
                     {desc && (
                       <p className={styles.desc}>{desc}</p>
                     )}
                     {link && (
-                      <a
-                        href={link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.link}
-                      >
-                        <span className={styles.linkText}>{t('partners.visitWebsite')}</span>
+                      <span className={styles.visitHint}>
+                        <span className={styles.visitHintText}>{t('partners.visitWebsite')}</span>
                         {displayUrl && (
-                          <span className={styles.linkUrl} aria-hidden>{displayUrl}</span>
+                          <span className={styles.visitHintUrl} aria-hidden>{displayUrl}</span>
                         )}
-                      </a>
+                      </span>
                     )}
+                  </div>
+                </>
+              )
+
+              if (link) {
+                return (
+                  <a
+                    key={item.id}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.cardLink}
+                  >
+                    <Card className={styles.card} padding="none">
+                      <CardContent className={styles.cardContent}>
+                        {content}
+                      </CardContent>
+                    </Card>
+                  </a>
+                )
+              }
+
+              return (
+                <Card key={item.id} className={styles.card} padding="none">
+                  <CardContent className={styles.cardContent}>
+                    {content}
                   </CardContent>
                 </Card>
               )

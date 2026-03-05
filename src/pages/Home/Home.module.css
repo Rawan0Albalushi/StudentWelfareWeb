@@ -1111,6 +1111,12 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   text-align: center;
 }
 
+@media (max-width: 479px) {
+  .sectionCampaigns .sectionFooter {
+    margin-block-start: var(--space-6);
+  }
+}
+
 .loadingState {
   display: flex;
   flex-direction: column;
@@ -1175,6 +1181,15 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   padding-block: var(--space-12) var(--space-14);
 }
 
+@media (max-width: 479px) {
+  .sectionCampaigns {
+    padding-block: var(--space-8) var(--space-10);
+  }
+  .sectionCampaigns .sectionHead {
+    margin-block-end: var(--space-6);
+  }
+}
+
 @media (min-width: 640px) {
   .sectionCampaigns {
     padding-block: var(--space-14) var(--space-18);
@@ -1191,6 +1206,12 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   display: grid;
   gap: var(--space-8);
   grid-template-columns: 1fr;
+}
+
+@media (max-width: 479px) {
+  .cardGrid {
+    gap: var(--space-5);
+  }
 }
 
 @media (min-width: 640px) {
@@ -1215,10 +1236,22 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
 }
 
+@media (max-width: 479px) {
+  .campaignCard {
+    border-radius: var(--radius-lg);
+  }
+}
+
 .campaignCard:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg), 0 12px 40px rgba(160, 32, 126, 0.08);
   border-color: var(--color-border-strong);
+}
+
+@media (max-width: 479px) {
+  .campaignCard:active {
+    transform: scale(0.98);
+  }
 }
 
 .campaignCardLink {
@@ -1235,6 +1268,12 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   background-position: center;
 }
 
+@media (max-width: 479px) {
+  .campaignCardImage {
+    aspect-ratio: 16 / 9;
+  }
+}
+
 .campaignCardOverlay {
   position: absolute;
   inset: 0;
@@ -1244,6 +1283,12 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
 
 .campaignCardBody {
   padding: var(--space-5);
+}
+
+@media (max-width: 479px) {
+  .campaignCardBody {
+    padding: var(--space-4);
+  }
 }
 
 .campaignCardTitle {
@@ -1258,12 +1303,25 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   overflow: hidden;
 }
 
+@media (max-width: 479px) {
+  .campaignCardTitle {
+    font-size: var(--text-base);
+    margin: 0 0 var(--space-3);
+  }
+}
+
 .campaignProgress {
   height: 6px;
   border-radius: var(--radius-full);
   background: var(--color-surface-variant);
   overflow: hidden;
   margin-block-end: var(--space-3);
+}
+
+@media (max-width: 479px) {
+  .campaignProgress {
+    margin-block-end: var(--space-2);
+  }
 }
 
 .campaignProgressBar {
@@ -1279,10 +1337,27 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   margin: 0;
 }
 
+@media (max-width: 479px) {
+  .campaignMeta {
+    font-size: var(--text-xs);
+    line-height: 1.45;
+    word-break: break-word;
+  }
+}
+
 .campaignCardFooter {
   padding: var(--space-3) var(--space-5);
   border-block-start: 1px solid var(--color-border);
   background: var(--color-surface-variant);
+}
+
+@media (max-width: 479px) {
+  .campaignCardFooter {
+    padding: var(--space-4) var(--space-4);
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+  }
 }
 
 .campaignCardCta {
@@ -1480,53 +1555,38 @@ html[dir='rtl'] .donationStripRow {
   }
 }
 
+/* عرض أفقي مع تمرير جانبي — جميع البطاقات بنفس التنسيق */
 .newsGrid {
-  display: grid;
-  gap: var(--space-6);
-  grid-template-columns: 1fr;
-  grid-template-rows: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: var(--space-5);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-block-end: var(--space-2);
+  margin-inline: calc(-1 * var(--space-4));
+  padding-inline: var(--space-4);
 }
 
-@media (min-width: 768px) {
-  .newsGrid {
-    grid-template-columns: 1.2fr 1fr;
-    grid-template-rows: auto auto;
-    gap: var(--space-6);
-  }
+.newsGrid::-webkit-scrollbar {
+  height: 6px;
 }
 
-@media (min-width: 960px) {
-  .newsGrid {
-    grid-template-columns: 1.35fr 1fr;
-    grid-template-rows: auto;
-    gap: var(--space-6);
-    min-height: 320px;
-  }
+.newsGrid::-webkit-scrollbar-track {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
 }
 
-.newsGridRest {
-  display: grid;
-  gap: var(--space-6);
-  grid-template-columns: 1fr;
-  grid-auto-rows: minmax(140px, auto);
-  align-content: start;
-}
-
-@media (min-width: 768px) {
-  .newsGridRest {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 960px) {
-  .newsGridRest {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.newsGrid::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
 }
 
 .newsCardFeatured {
-  grid-column: 1;
-  grid-row: 1 / -1;
+  flex: 0 0 min(360px, 88vw);
+  min-width: min(360px, 88vw);
   display: flex;
   flex-direction: column;
   background: var(--color-bg-elevated);
@@ -1535,6 +1595,8 @@ html[dir='rtl'] .donationStripRow {
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow-md);
   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .newsCardFeatured:hover {
@@ -1549,6 +1611,20 @@ html[dir='rtl'] .donationStripRow {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.newsCardBadgeFeatured {
+  position: absolute;
+  top: var(--space-3);
+  inset-inline-start: var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary-dark);
+  background: var(--color-primary-tint);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
 }
 
 .newsCardIcon {
@@ -1626,70 +1702,45 @@ html[dir='rtl'] .newsReadMore::after {
   transform: rotate(135deg);
 }
 
-.newsCard {
-  display: flex;
-  flex-direction: column;
-  background: var(--color-bg-elevated);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
-}
+/* ========== News — تحسين العرض على الهاتف ========== */
+@media (max-width: 599px) {
+  .sectionNews {
+    padding-block: var(--space-10) var(--space-12);
+    padding-inline: var(--space-4);
+  }
 
-.newsCard:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-tint);
-}
+  .newsGrid {
+    gap: var(--space-4);
+  }
 
-.newsCardImageSmall {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .newsCardFeatured {
+    flex: 0 0 min(320px, 90vw);
+    min-width: min(320px, 90vw);
+  }
 
-.newsCardIconSmall {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: rgba(255, 255, 255, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .newsCardImage {
+    min-height: 160px;
+    aspect-ratio: 16 / 10;
+  }
 
-.newsCardIconSmall svg {
-  width: 100%;
-  height: 100%;
-}
+  .newsCardContent {
+    padding: var(--space-4);
+    gap: var(--space-2);
+  }
 
-.newsCardContentSmall {
-  padding: var(--space-4);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
+  .newsDate {
+    font-size: var(--text-xs);
+  }
 
-.newsDateSmall {
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
+  .newsCardTitle {
+    font-size: var(--text-lg);
+    -webkit-line-clamp: 2;
+  }
 
-.newsCardTitleSmall {
-  font-size: var(--text-base);
-  font-weight: 700;
-  margin: 0;
-  color: var(--color-text);
-  line-height: var(--line-height-tight);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  .newsExcerpt {
+    font-size: var(--text-sm);
+    -webkit-line-clamp: 2;
+  }
 }
 
 
