@@ -10,6 +10,7 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 /* RTL/LTR: use class so it always wins; set by setDocumentDirection() and index.html script */
@@ -82,6 +83,8 @@ html.dir-rtl .js-donation-subtext {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: var(--line-height-normal);

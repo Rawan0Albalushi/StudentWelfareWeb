@@ -11,8 +11,8 @@
   align-items: center;
   justify-content: center;
   color: var(--color-text-inverse);
-  padding-block: var(--space-6) var(--space-10);
-  padding-inline: var(--space-4);
+  padding-block: var(--space-10) var(--space-14);
+  padding-inline: var(--space-5);
   overflow: hidden;
   box-sizing: border-box;
   border-radius: 0 0 min(12rem, 24%) min(12rem, 24%);
@@ -22,11 +22,13 @@
   background: linear-gradient(145deg, #5a2460 0%, #6b2d5c 30%, var(--color-primary) 50%, #8a4a7e 70%, var(--color-secondary) 85%, #1a5f7a 100%);
 }
 
-/* على الموبايل: مساحة كافية لعدم قص بطاقة البانر */
+/* على الموبايل: مساحة كافية لعدم قص النص أو البطاقة */
 @media (max-width: 767px) {
   .hero {
-    min-height: min(78vh, 620px);
-    padding-block-end: var(--space-12);
+    min-height: min(85vh, 680px);
+    padding-block: var(--space-10) var(--space-14);
+    padding-inline: var(--space-5);
+    padding-block-end: var(--space-16);
     border-radius: 0 0 min(6rem, 16%) min(6rem, 16%);
   }
 }
@@ -237,6 +239,7 @@
   max-width: 100%;
   min-width: 0;
   flex: 1 1 auto;
+  overflow: visible;
 }
 
 .heroGrid {
@@ -254,6 +257,7 @@
 @media (min-width: 640px) {
   .hero {
     padding-inline: var(--space-6);
+    padding-block: var(--space-10) var(--space-14);
   }
 }
 
@@ -288,7 +292,8 @@
 
 @media (min-width: 960px) {
   .hero {
-    padding-inline: var(--space-8);
+    padding-inline: var(--space-10);
+    padding-block: var(--space-12) var(--space-16);
   }
   .heroGrid {
     grid-template-columns: 1fr minmax(320px, 38rem);
@@ -535,6 +540,8 @@ html[dir='ltr'] .hero .regCard {
   align-items: center;
   gap: var(--space-4);
   min-width: 0;
+  padding-inline: var(--space-2);
+  overflow: visible;
 }
 
 /* ظهور المحتوى الموحّد — badge, title, subtitle, card */
@@ -611,7 +618,11 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
   margin: 0;
   line-height: 1.22;
   letter-spacing: -0.03em;
-  max-inline-size: min(22ch, 100%);
+  max-inline-size: min(24ch, 100%);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  /* مساحة سفلية لعدم قص نقاط وحركات الحروف (مثل نقاط الياء في الجامعي) */
+  padding-block-end: 0.2em;
 }
 
 .heroTitleLine {
@@ -622,16 +633,20 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
   color: transparent;
   text-shadow: none;
   filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.2));
+  /* مساحة إضافية أسفل النص حتى لا يُقصّ الجزء السفلي (نقاط الياء وغيرها) */
+  padding-block-end: 0.12em;
 }
 
 [lang='ar'] .heroTitle {
-  line-height: 1.4;
+  line-height: 1.5;
   letter-spacing: 0;
-  max-inline-size: min(28ch, 100%);
+  max-inline-size: min(36ch, 100%);
+  padding-block-end: 0.25em;
 }
 
 [lang='ar'] .heroTitleLine {
   letter-spacing: 0;
+  padding-block-end: 0.18em;
 }
 
 .heroSubtitle {
@@ -640,7 +655,9 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
   margin: 0;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.92);
-  max-inline-size: 26rem;
+  max-inline-size: 28rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 [lang='ar'] .heroSubtitle {
@@ -1074,6 +1091,12 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
   letter-spacing: -0.02em;
 }
 
+@media (max-width: 479px) {
+  .sectionTitle {
+    font-size: var(--text-2xl);
+  }
+}
+
 .sectionSubtitle {
   font-size: var(--text-base);
   color: var(--color-text-muted);
@@ -1127,6 +1150,13 @@ html[dir='rtl'] .hero .regCardSecondaryLink {
 /* Same horizontal padding as PageLayout .main for noPadding layout */
 .pageGutter {
   padding-inline: var(--space-4);
+  min-width: 0;
+}
+
+@media (max-width: 379px) {
+  .pageGutter {
+    padding-inline: var(--space-3);
+  }
 }
 
 @media (min-width: 640px) {

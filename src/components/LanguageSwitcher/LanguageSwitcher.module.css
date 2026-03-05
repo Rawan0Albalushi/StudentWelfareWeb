@@ -13,6 +13,8 @@
   border: none;
   color: var(--color-text-muted);
   transition: background var(--transition-fast), color var(--transition-fast);
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:hover {

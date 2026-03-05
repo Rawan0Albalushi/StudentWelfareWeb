@@ -26,6 +26,7 @@
   padding-block-end: var(--space-8);
   padding-inline: var(--space-4);
   scroll-margin-block-start: var(--header-height);
+  min-width: 0;
 }
 
 /* Single place for top offset so all page titles sit below fixed header (same as Campaigns fix) */
@@ -33,11 +34,18 @@
   padding-block-start: calc(var(--header-height) + var(--space-6));
   padding-block-end: var(--space-8);
   min-block-size: 50vh;
+  min-width: 0;
 }
 
 .mainNoPadding {
   flex: 1;
   padding-block-start: var(--header-height);
+}
+
+@media (max-width: 379px) {
+  .main {
+    padding-inline: var(--space-3);
+  }
 }
 
 @media (min-width: 640px) {

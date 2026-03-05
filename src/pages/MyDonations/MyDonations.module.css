@@ -8,12 +8,26 @@
   box-shadow: var(--shadow-sm);
 }
 
+@media (max-width: 479px) {
+  .pageHeader {
+    padding-inline: var(--space-3);
+    padding-block: var(--space-8) var(--space-6);
+    margin-block-end: var(--space-8);
+  }
+}
+
 .title {
   font-size: var(--text-3xl);
   font-weight: 800;
   margin: 0 0 var(--space-2);
   color: #FFFFFF;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 479px) {
+  .title {
+    font-size: var(--text-2xl);
+  }
 }
 
 .subtitle {
@@ -25,8 +39,20 @@
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
+@media (max-width: 479px) {
+  .subtitle {
+    font-size: var(--text-sm);
+  }
+}
+
 .container {
   padding-block: var(--space-10) var(--space-10);
+}
+
+@media (max-width: 479px) {
+  .container {
+    padding-block: var(--space-6) var(--space-8);
+  }
 }
 
 /* ========== Summary section ========== */
@@ -140,6 +166,14 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5) !important;
+}
+
+@media (max-width: 479px) {
+  .donationCardContent {
+    padding: var(--space-3) var(--space-4) !important;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
 }
 
 .donationIcon {
