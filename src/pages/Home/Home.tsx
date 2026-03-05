@@ -251,6 +251,7 @@ export function Home() {
               <p className={`${styles.heroBadge} ${styles.heroReveal1} js-hero-badge`}>{t('app.tagline')}</p>
               <h1 className={`${styles.heroTitle} ${styles.heroReveal2} js-hero-title`}>
                 <span className={styles.heroTitleLine}>{t('home.heroTitle')}</span>
+                <span className={styles.heroTitleAccent} aria-hidden="true" />
               </h1>
               <p className={`${styles.heroSubtitle} ${styles.heroReveal3} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
             </div>

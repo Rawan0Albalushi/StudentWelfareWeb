@@ -1,82 +1,76 @@
-/* ========== Hero — creative modern split: copy + CTA, glass card ========== */
-/* توحيد التوقيت والسلاسة لجميع تأثيرات الهيرو */
+/* ========== Hero — تصميم عصري حديث: mesh gradient + glass card ========== */
 .hero {
   --hero-ease: cubic-bezier(0.33, 1, 0.68, 1);
   --hero-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --hero-reveal-duration: 0.5s;
+  --hero-reveal-duration: 0.6s;
+  --hero-glow: rgba(255, 255, 255, 0.06);
   position: relative;
   width: 100%;
-  min-height: 50vh;
+  min-height: 58vh;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-inverse);
-  padding-block: var(--space-10) var(--space-14);
+  padding-block: var(--space-14) var(--space-18);
   padding-inline: var(--space-5);
   overflow: hidden;
   box-sizing: border-box;
-  border-radius: 0 0 min(12rem, 24%) min(12rem, 24%);
-  /* مساحة بسيطة من الهيرو تظهر تحت الهيدر */
+  border-radius: 0 0 3rem 3rem;
   margin-block-start: calc(-1 * var(--space-6));
-  /* خلفية موحّدة لملء الزوايا المستديرة وإزالة ظهور الخلفية البيضاء */
-  background: linear-gradient(145deg, #5a2460 0%, #6b2d5c 30%, var(--color-primary) 50%, #8a4a7e 70%, var(--color-secondary) 85%, #1a5f7a 100%);
+  /* Mesh عصري: بنفسجي → وردي → أزرق */
+  background:
+    radial-gradient(ellipse 120% 100% at 50% -20%, rgba(139, 92, 246, 0.35) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 60% at 90% 50%, rgba(236, 72, 153, 0.2) 0%, transparent 45%),
+    radial-gradient(ellipse 70% 80% at 10% 80%, rgba(34, 211, 238, 0.18) 0%, transparent 45%),
+    linear-gradient(160deg, #3b1a4a 0%, #5a2460 22%, #6b2d5c 40%, var(--color-primary) 58%, #7d3d72 72%, var(--color-secondary) 88%, #0f4c5c 100%);
+  box-shadow: 0 25px 80px -30px rgba(0, 0, 0, 0.4);
 }
 
-/* على الموبايل: مساحة كافية لعدم قص النص أو البطاقة */
 @media (max-width: 767px) {
   .hero {
-    min-height: min(85vh, 680px);
-    padding-block: var(--space-10) var(--space-14);
+    min-height: min(90vh, 740px);
+    padding-block: var(--space-12) var(--space-16);
     padding-inline: var(--space-5);
-    padding-block-end: var(--space-16);
-    border-radius: 0 0 min(6rem, 16%) min(6rem, 16%);
+    padding-block-end: var(--space-18);
+    border-radius: 0 0 2.5rem 2.5rem;
   }
 }
 
-/* منحنى سفلي ناعم يربط الهيرو بالمحتوى التالي */
+/* منحنى سفلي عصري */
 .heroCurve {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  height: min(4rem, 7vw);
-  background: linear-gradient(
-    145deg,
-    #5a2460 0%,
-    var(--color-primary) 25%,
-    #8a4a7e 55%,
-    var(--color-secondary) 80%,
-    #1a5f7a 100%
-  );
+  height: min(5rem, 9vw);
+  background: linear-gradient(160deg, #3b1a4a 0%, var(--color-primary) 35%, #7d3d72 65%, #0f4c5c 100%);
   pointer-events: none;
   z-index: 0;
-  border-radius: 0 0 min(12rem, 24%) min(12rem, 24%);
+  border-radius: 0 0 3rem 3rem;
 }
 
 @media (max-width: 767px) {
   .heroCurve {
-    border-radius: 0 0 min(6rem, 16%) min(6rem, 16%);
+    border-radius: 0 0 2.5rem 2.5rem;
   }
 }
 
-/* لمعة ثابتة خفيفة — بدون حركة */
+/* لمعة علوية خفيفة — عمق حديث */
 .heroShine {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   background: linear-gradient(
-    110deg,
-    transparent 0%,
-    transparent 45%,
-    rgba(255, 255, 255, 0.04) 50%,
-    transparent 55%,
-    transparent 100%
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 25%,
+    transparent 70%,
+    rgba(0, 0, 0, 0.03) 100%
   );
-  background-size: 100% 100%;
 }
 
-/* أيقونات زينة في خلفية الهيرو */
+/* أيقونات زينة — أسلوب عصري شفاف */
 .heroBgIcons {
   position: absolute;
   inset: 0;
@@ -87,7 +81,7 @@
 
 .heroBgIcon {
   position: absolute;
-  color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,53 +93,40 @@
 }
 
 .heroBgIcon[data-icon='heart'] {
-  width: 72px;
-  height: 72px;
-  top: 12%;
-  right: 18%;
+  width: 100px;
+  height: 100px;
+  top: 8%;
+  right: 12%;
 }
 
 .heroBgIcon[data-icon='graduation'] {
-  width: 88px;
-  height: 88px;
-  bottom: 25%;
-  left: 5%;
+  width: 110px;
+  height: 110px;
+  bottom: 18%;
+  left: 2%;
 }
 
-.hero[dir='rtl'] .heroBgIcon[data-icon='heart'] { right: auto; left: 18%; }
-.hero[dir='rtl'] .heroBgIcon[data-icon='graduation'] { left: auto; right: 5%; }
+.hero[dir='rtl'] .heroBgIcon[data-icon='heart'] { right: auto; left: 12%; }
+.hero[dir='rtl'] .heroBgIcon[data-icon='graduation'] { left: auto; right: 2%; }
 
 
-/* Mesh-style gradient background — modern depth */
+/* طبقة تدرج إضافية للتناسق */
 .heroBg {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(145deg, #5a2460 0%, transparent 40%),
-    linear-gradient(220deg, #1e6b8a 0%, transparent 45%),
-    linear-gradient(135deg, #6b2d5c 0%, var(--color-primary) 35%, #8a4a7e 60%, var(--color-secondary) 85%, #1a5f7a 100%);
-}
-
-.heroBg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 100% 80% at 15% 20%, rgba(255, 255, 255, 0.14) 0%, transparent 45%),
-    radial-gradient(ellipse 70% 60% at 88% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 65%);
+    radial-gradient(ellipse 100% 70% at 20% 10%, rgba(255, 255, 255, 0.12) 0%, transparent 45%),
+    radial-gradient(ellipse 60% 80% at 85% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.04) 100%);
   pointer-events: none;
 }
 
+.heroBg::before,
 .heroBg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.08) 100%);
-  pointer-events: none;
+  content: none;
 }
 
-/* Shapes container — ثابت بدون طفو */
+/* Orbs عصرية — كرات ضوء ناعمة */
 .heroShapes {
   position: absolute;
   inset: 0;
@@ -156,28 +137,28 @@
 .heroShapes::before {
   content: '';
   position: absolute;
-  width: 420px;
-  height: 420px;
-  top: -140px;
-  inset-inline-end: -100px;
+  width: 520px;
+  height: 520px;
+  top: -180px;
+  inset-inline-end: -140px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 65%);
-  filter: blur(55px);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 40%, transparent 65%);
+  filter: blur(70px);
 }
 
 .heroShapes::after {
   content: '';
   position: absolute;
-  width: 300px;
-  height: 300px;
-  bottom: -80px;
-  inset-inline-start: -60px;
+  width: 380px;
+  height: 380px;
+  bottom: -100px;
+  inset-inline-start: -80px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 65%);
-  filter: blur(50px);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 55%);
+  filter: blur(60px);
 }
 
-/* أشكال ثابتة للعمق */
+/* بقع ضوء إضافية */
 .heroShape {
   position: absolute;
   border-radius: 50%;
@@ -185,21 +166,21 @@
 }
 
 .heroShape[data-shape='1'] {
-  width: 120px;
-  height: 120px;
-  top: 18%;
-  inset-inline-start: 8%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  filter: blur(25px);
+  width: 160px;
+  height: 160px;
+  top: 15%;
+  inset-inline-start: 5%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.09) 0%, transparent 65%);
+  filter: blur(35px);
 }
 
 .heroShape[data-shape='2'] {
-  width: 80px;
-  height: 80px;
-  top: 55%;
-  inset-inline-end: 15%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, transparent 70%);
-  filter: blur(20px);
+  width: 120px;
+  height: 120px;
+  top: 58%;
+  inset-inline-end: 10%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.07) 0%, transparent 65%);
+  filter: blur(28px);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -213,22 +194,22 @@
   }
 }
 
+/* نسيج خفيف للعمق */
 .heroNoise {
   position: absolute;
   inset: 0;
-  opacity: 0.015;
+  opacity: 0.02;
   pointer-events: none;
   z-index: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* شبكة نقاط خفيفة للعمق */
 .heroNoise::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
-  background-size: 32px 32px;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.04) 1px, transparent 0);
+  background-size: 40px 40px;
   pointer-events: none;
 }
 
@@ -245,9 +226,9 @@
 .heroGrid {
   display: grid;
   width: 100%;
-  gap: var(--space-6);
+  gap: var(--space-8);
   grid-template-columns: 1fr;
-  max-inline-size: 72rem;
+  max-inline-size: 76rem;
   margin-inline: auto;
   align-items: center;
   min-width: 0;
@@ -301,31 +282,56 @@
   }
 }
 
-/* ——— منطقة موحّدة: بطاقة التسجيل أماماً، البانرات خلفها ——— */
+/* ——— بطاقة CTA عصرية — زجاج + ظلال ناعمة ——— */
 .heroUnified {
   position: relative;
   width: 100%;
   min-height: 220px;
-  border-radius: var(--radius-2xl);
+  border-radius: 1.5rem;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 25px 60px -15px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
   animation: heroReveal var(--hero-reveal-duration) var(--hero-ease-out) 0.25s both;
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal), border-color var(--transition-normal);
+}
+
+.heroUnified:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    0 32px 72px -12px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  transform: translateY(-2px);
 }
 
 @media (max-width: 767px) {
   .heroUnified {
     min-height: 260px;
     margin-inline: 0;
+    border-radius: 1.25rem;
   }
 }
 
 .heroUnifiedNoBanners {
   min-height: 0;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow:
+    0 20px 50px -15px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
   justify-content: center;
+}
+
+.heroUnifiedNoBanners:hover {
+  box-shadow:
+    0 24px 58px -12px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 /* طبقة البانرات (خلفية) */
@@ -374,22 +380,24 @@
 }
 
 .heroBannersDot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: none;
   background: rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  transition: background 0.25s ease, transform 0.2s ease;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .heroBannersDot:hover {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.7);
+  transform: scale(1.15);
 }
 
 .heroBannersDotActive {
-  background: rgba(255, 255, 255, 0.95);
-  transform: scale(1.25);
+  background: rgba(255, 255, 255, 0.98);
+  transform: scale(1.3);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
 }
 
 /* بطاقة التسجيل في المقدمة */
@@ -532,13 +540,13 @@ html[dir='ltr'] .hero .regCard {
   align-items: flex-start;
 }
 
-/* Section 2 (left): Creative banner – fund name, mission, CTA card */
+/* منطقة النص — شارة، عنوان، وصف */
 .heroBanner {
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-6);
   min-width: 0;
   padding-inline: var(--space-2);
   overflow: visible;
@@ -594,47 +602,77 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
 .heroReveal3 { animation: heroReveal var(--hero-reveal-duration) var(--hero-ease-out) 0.35s both; }
 .heroReveal4 { animation: heroRevealCard var(--hero-reveal-duration) var(--hero-ease-out) 0.45s both; }
 
+/* شارة عصريّة — زجاج مع حدود ناعمة */
 .heroBadge {
   font-family: var(--font-sans);
   display: inline-flex;
   align-items: center;
   margin: 0;
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-2) var(--space-5);
   font-size: var(--text-sm, 0.9375rem);
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.95);
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.98);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-full);
-  transition: border-color var(--transition-fast);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
+.heroBadge:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* عنوان رئيسي — طباعة واضحة وجريئة */
 .heroTitle {
   font-family: var(--font-display);
-  font-size: clamp(1.85rem, 5vw + 0.9rem, 3.5rem);
+  font-size: clamp(2.1rem, 6vw + 1rem, 4rem);
   font-weight: 800;
   margin: 0;
-  line-height: 1.22;
-  letter-spacing: -0.03em;
+  line-height: 1.18;
+  letter-spacing: -0.04em;
   max-inline-size: min(24ch, 100%);
   overflow-wrap: break-word;
   word-wrap: break-word;
-  /* مساحة سفلية لعدم قص نقاط وحركات الحروف (مثل نقاط الياء في الجامعي) */
-  padding-block-end: 0.2em;
+  padding-block-end: 0.25em;
+  position: relative;
 }
 
 .heroTitleLine {
   display: inline-block;
-  background: linear-gradient(120deg, #ffffff 0%, #f5f0ff 50%, #ffffff 100%);
+  background: linear-gradient(130deg, #ffffff 0%, #f5f0ff 40%, #ffffff 60%, #ebe5ff 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   text-shadow: none;
-  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.2));
-  /* مساحة إضافية أسفل النص حتى لا يُقصّ الجزء السفلي (نقاط الياء وغيرها) */
+  filter: drop-shadow(0 2px 20px rgba(0, 0, 0, 0.25)) drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
   padding-block-end: 0.12em;
+}
+
+/* خط زخرفي تحت العنوان — لمسة عصرية */
+.heroTitleAccent {
+  display: block;
+  width: min(4rem, 20vw);
+  height: 4px;
+  margin-block-start: 0.35em;
+  margin-inline-start: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 100%);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
+}
+
+html[dir='rtl'] .heroTitleAccent,
+.hero[dir='rtl'] .heroTitleAccent {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 100%);
 }
 
 [lang='ar'] .heroTitle {
@@ -651,13 +689,15 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
 
 .heroSubtitle {
   font-family: var(--font-sans);
-  font-size: clamp(var(--text-sm), 1.2vw + 0.6rem, var(--text-base));
+  font-size: clamp(var(--text-sm), 1.3vw + 0.65rem, 1.125rem);
   margin: 0;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.95);
   max-inline-size: 28rem;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  font-weight: 500;
 }
 
 [lang='ar'] .heroSubtitle {
@@ -721,7 +761,7 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
   }
 }
 
-/* بطاقة تسجيل الطلب — تحسين المظهر */
+/* بطاقة التسجيل — زجاج عصري مع توهج خفيف */
 .regCard {
   position: relative;
   display: flex;
@@ -729,13 +769,13 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
   padding-block: var(--space-5) var(--space-6);
   padding-inline: var(--space-5);
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--radius-2xl, 1.25rem);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
   color: #fff;
   box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.18),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
   flex: 1;
@@ -762,24 +802,26 @@ html[dir='rtl'] .hero .heroBanner .heroSubtitle {
 
 .heroCardWrap:hover .regCard {
   transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.32);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+    0 18px 48px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .regCardIcon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.15);
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.18);
   color: #fff;
   margin-block-end: var(--space-4);
   position: relative;
   z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .regCardIcon svg {
