@@ -15,6 +15,7 @@ import { fundNewsService } from '../../services/fundNewsService'
 import { fundPartnerService } from '../../services/fundPartnerService'
 import { resolveImageUrl } from '../../config/api'
 import type { CampaignOrProgram, RecentDonation, Banner, StudentRegistrationCard, FundNews, FundPartner } from '../../types/api'
+import { CampaignAmountGoal } from '../../components/CampaignAmountGoal'
 import styles from './Home.module.css'
 
 const FALLBACK_CARD_DESC_AR = 'سجّل طلبك للاستفادة من برامج الدعم الدراسي. استكمل بياناتك وارفع المستندات المطلوبة.'
@@ -62,12 +63,6 @@ export function Home() {
   const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
   const getTitle = (item: CampaignOrProgram) =>
     (item[titleKey as keyof CampaignOrProgram] as string) || item.title || `#${item.id}`
-
-  const getProgress = (item: CampaignOrProgram) => {
-    const goal = Number(item.goal_amount) || 1
-    const raised = Number(item.raised_amount) || 0
-    return Math.min(100, Math.round((raised / goal) * 100))
-  }
 
   const getTimeAgoKey = (iso?: string): { key: string; count?: number } => {
     if (!iso) return { key: 'home.timeAgoJustNow' }
@@ -310,22 +305,33 @@ export function Home() {
                     }
                   >
                     {cardBgImage && <span className={styles.regCardOverlay} aria-hidden="true" />}
-                    <span className={styles.regCardIcon} aria-hidden="true">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-                      </svg>
-                    </span>
-                    <h3 className={`${styles.regCardTitle} js-reg-card-title`}>{cardHeadline}</h3>
-                    <p className={`${styles.regCardDesc} js-reg-card-desc`}>{cardSubtitle}</p>
-                    <Link
-                      to="/student-registration"
-                      className={`${styles.regCardButton} ${statusClass} js-reg-card-button`}
-                    >
-                      {statusLabel}
-                      <span className={`${styles.regCardArrow} js-reg-card-arrow`} aria-hidden="true">→</span>
-                    </Link>
+                    <span className={styles.regCardAccent} aria-hidden="true" />
+                    <div className={styles.regCardInner}>
+                      <div className={styles.regCardHeader}>
+                        <span className={styles.regCardIcon} aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                          </svg>
+                        </span>
+                        <span className={styles.regCardTag}>{t('home.regCardTag')}</span>
+                      </div>
+                      <h3 className={`${styles.regCardTitle} js-reg-card-title`}>{cardHeadline}</h3>
+                      <p className={`${styles.regCardDesc} js-reg-card-desc`}>{cardSubtitle}</p>
+                      <Link
+                        to="/student-registration"
+                        className={`${styles.regCardButton} ${statusClass} js-reg-card-button`}
+                      >
+                        <span className={styles.regCardButtonText}>{statusLabel}</span>
+                        <span className={`${styles.regCardArrow} js-reg-card-arrow`} aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
+                        </span>
+                      </Link>
+                    </div>
                   </div>
                 </div>
             </div>
@@ -368,19 +374,10 @@ export function Home() {
                       </div>
                       <div className={styles.campaignCardBody}>
                         <h3 className={styles.campaignCardTitle}>{getTitle(item)}</h3>
-                        <div className={styles.campaignProgress}>
-                          <div
-                            className={styles.campaignProgressBar}
-                            style={{ width: `${getProgress(item)}%` }}
-                            role="progressbar"
-                            aria-valuenow={getProgress(item)}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                        <p className={styles.campaignMeta}>
-                          {t('campaigns.raised')}: {item.raised_amount ?? 0} OMR — {t('campaigns.goal')}: {item.goal_amount ?? 0} OMR
-                        </p>
+                        <CampaignAmountGoal
+                          raisedAmount={item.raised_amount}
+                          goalAmount={item.goal_amount}
+                        />
                       </div>
                       <div className={styles.campaignCardFooter}>
                         <span className={styles.campaignCardCta}>{t('campaigns.donate')}</span>

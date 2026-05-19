@@ -12,6 +12,7 @@ import { donationService } from '../../services/donationService'
 import { paymentService } from '../../services/paymentService'
 import { ApiError, clearToken } from '../../services/apiClient'
 import type { CampaignOrProgram } from '../../types/api'
+import { CampaignAmountGoal } from '../../components/CampaignAmountGoal'
 import styles from './Donate.module.css'
 
 const FALLBACK_QUICK_AMOUNTS = [10, 25, 50, 100, 200, 500]
@@ -139,13 +140,6 @@ export function Donate() {
   }
   const getImpact = (item: CampaignOrProgram) =>
     (item[impactKey as keyof CampaignOrProgram] as string) || item.impact_description || ''
-  const getProgress = (item: CampaignOrProgram) => {
-    const goal = item.goal_amount ?? 0
-    const raised = item.raised_amount ?? 0
-    if (goal <= 0) return 0
-    return Math.min(100, Math.round((raised / goal) * 100))
-  }
-
   const shareUrl = getShareUrl()
   const shareTitle = campaignDetails ? getTitle(campaignDetails) : t('donate.title')
 
@@ -349,22 +343,11 @@ export function Donate() {
                     )}
                     {(campaignDetails.goal_amount != null && campaignDetails.goal_amount > 0) && (
                       <div className={styles.campaignDetailProgressWrap}>
-                        <div
-                          className={styles.campaignDetailProgress}
-                          role="progressbar"
-                          aria-valuenow={getProgress(campaignDetails)}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-label={t('campaigns.raised')}
-                        >
-                          <div
-                            className={styles.campaignDetailProgressBar}
-                            style={{ width: `${getProgress(campaignDetails)}%` }}
-                          />
-                        </div>
-                        <p className={styles.campaignDetailMeta}>
-                          {t('campaigns.raised')}: {campaignDetails.raised_amount ?? 0} {t('donate.currencyShort')} — {t('campaigns.goal')}: {campaignDetails.goal_amount} {t('donate.currencyShort')}
-                        </p>
+                        <CampaignAmountGoal
+                          raisedAmount={campaignDetails.raised_amount}
+                          goalAmount={campaignDetails.goal_amount}
+                          progressSize="md"
+                        />
                       </div>
                     )}
                   </div>

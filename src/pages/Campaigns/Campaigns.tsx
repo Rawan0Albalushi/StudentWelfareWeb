@@ -6,6 +6,7 @@ import { Container } from '../../components/ui/Container'
 import { campaignService } from '../../services/campaignService'
 import { resolveImageUrl } from '../../config/api'
 import type { CampaignOrProgram } from '../../types/api'
+import { CampaignAmountGoal } from '../../components/CampaignAmountGoal'
 import styles from './Campaigns.module.css'
 
 export function Campaigns() {
@@ -17,13 +18,6 @@ export function Campaigns() {
   const titleKey = lang === 'ar' ? 'title_ar' : 'title_en'
   const getTitle = (item: CampaignOrProgram) =>
     (item[titleKey as keyof CampaignOrProgram] as string) || item.title || `#${item.id}`
-
-  const getProgress = (item: CampaignOrProgram) => {
-    const goal = item.goal_amount ?? 0
-    const raised = item.raised_amount ?? 0
-    if (goal <= 0) return 0
-    return Math.min(100, Math.round((raised / goal) * 100))
-  }
 
   useEffect(() => {
     let cancelled = false
@@ -94,20 +88,10 @@ export function Campaigns() {
                   </div>
                   <div className={styles.cardBody}>
                     <h3 className={styles.cardTitle}>{getTitle(item)}</h3>
-                    <div className={styles.progress}>
-                      <div
-                        className={styles.progressBar}
-                        style={{ width: `${getProgress(item)}%` }}
-                        role="progressbar"
-                        aria-valuenow={getProgress(item)}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                        aria-label={t('campaigns.raised')}
-                      />
-                    </div>
-                    <p className={styles.meta}>
-                      {t('campaigns.raised')}: {item.raised_amount ?? 0} {t('donate.currencyShort')} — {t('campaigns.goal')}: {item.goal_amount ?? 0} {t('donate.currencyShort')}
-                    </p>
+                    <CampaignAmountGoal
+                      raisedAmount={item.raised_amount}
+                      goalAmount={item.goal_amount}
+                    />
                   </div>
                   <div className={styles.cardFooter}>
                     <span className={styles.cta}>{t('campaigns.donate')}</span>

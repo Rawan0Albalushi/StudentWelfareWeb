@@ -256,7 +256,7 @@
     direction: rtl;
   }
   .heroGridNoBanners .heroUnified {
-    max-inline-size: 520px;
+    max-inline-size: 36rem;
     margin-inline: 0;
   }
   html.dir-rtl .hero .heroGrid,
@@ -277,43 +277,30 @@
     padding-block: var(--space-12) var(--space-16);
   }
   .heroGrid {
-    grid-template-columns: 1fr minmax(320px, 38rem);
+    grid-template-columns: 1fr minmax(340px, 40rem);
     align-items: stretch;
   }
 }
 
-/* ——— بطاقة CTA عصرية — زجاج + ظلال ناعمة ——— */
+/* ——— منطقة البطاقة — حاوية خفيفة، العمق في البطاقة نفسها ——— */
 .heroUnified {
   position: relative;
   width: 100%;
-  min-height: 220px;
-  border-radius: 1.5rem;
+  min-height: 280px;
+  border-radius: 1.75rem;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow:
-    0 25px 60px -15px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   animation: heroReveal var(--hero-reveal-duration) var(--hero-ease-out) 0.25s both;
-  transition: box-shadow var(--transition-normal), transform var(--transition-normal), border-color var(--transition-normal);
-}
-
-.heroUnified:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 32px 72px -12px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
-  transform: translateY(-2px);
 }
 
 @media (max-width: 767px) {
   .heroUnified {
-    min-height: 260px;
+    min-height: 300px;
     margin-inline: 0;
     border-radius: 1.25rem;
   }
@@ -321,17 +308,7 @@
 
 .heroUnifiedNoBanners {
   min-height: 0;
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow:
-    0 20px 50px -15px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
   justify-content: center;
-}
-
-.heroUnifiedNoBanners:hover {
-  box-shadow:
-    0 24px 58px -12px rgba(0, 0, 0, 0.35),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 /* طبقة البانرات (خلفية) */
@@ -404,21 +381,21 @@
 .heroCardForeground {
   position: relative;
   z-index: 1;
-  padding: var(--space-5);
+  padding: var(--space-3);
   min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .heroUnifiedNoBanners .heroCardForeground {
   justify-content: center;
-  padding: var(--space-4);
+  padding: var(--space-3);
 }
 
 .hero[dir='rtl'] .heroCardForeground,
 html[dir='rtl'] .hero .heroCardForeground {
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .heroUnifiedNoBanners .heroCardForeground {
@@ -719,8 +696,15 @@ html[dir='rtl'] .heroTitleAccent,
 .heroUnified .heroCardWrap,
 .heroUnified .heroCardForeground {
   width: 100%;
-  max-width: 440px;
+  max-width: min(100%, 32rem);
   margin: 0;
+}
+
+@media (min-width: 768px) {
+  .heroUnified .heroCardWrap,
+  .heroUnified .heroCardForeground {
+    max-width: min(100%, 36rem);
+  }
 }
 
 .heroCtaPrimary {
@@ -761,33 +745,157 @@ html[dir='rtl'] .heroTitleAccent,
   }
 }
 
-/* بطاقة التسجيل — زجاج عصري مع توهج خفيف */
+/* بطاقة التسجيل — زجاج عصري، طبقة واحدة، لمسة تدرج علوية */
 .regCard {
+  --reg-card-radius: 2rem;
+  --reg-card-radius-inner: 1.5rem;
+  --reg-card-pad-x: clamp(1.25rem, 3.5vw, 2rem);
+  --reg-card-pad-y: clamp(1.5rem, 4vw, 2.25rem);
+  --reg-card-gap-tight: 0.5rem;
+  --reg-card-gap-text: 0.625rem;
+  --reg-card-gap-section: 1.125rem;
+  --reg-card-gap-cta: 1.5rem;
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-block: var(--space-5) var(--space-6);
-  padding-inline: var(--space-5);
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  padding: 0;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  border-radius: var(--reg-card-radius);
+  border: 1.5px solid rgba(255, 255, 255, 0.32);
   color: #fff;
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.18),
-    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-  transition: transform var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 4px 24px rgba(0, 0, 0, 0.12),
+    0 24px 48px -12px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  transition:
+    transform 0.35s var(--hero-ease-out),
+    border-color 0.35s ease,
+    box-shadow 0.35s var(--hero-ease-out);
   flex: 1;
   min-width: 0;
-  max-width: 480px;
+  max-width: none;
   width: 100%;
+  min-height: auto;
   overflow: hidden;
+  isolation: isolate;
 }
 
-.regCard::before,
+@media (min-width: 768px) {
+  .regCard {
+    --reg-card-radius: 2.375rem;
+    --reg-card-radius-inner: 1.625rem;
+    --reg-card-pad-x: 2rem;
+    --reg-card-pad-y: 2.25rem;
+    --reg-card-gap-section: 1.25rem;
+    --reg-card-gap-cta: 1.625rem;
+  }
+}
+
+.regCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
 .regCard::after {
-  content: none;
+  content: '';
+  position: absolute;
+  top: -40%;
+  inset-inline-end: -20%;
+  width: 55%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* خط تدرج علوي — يتبع انحناء الإطار */
+.regCardAccent {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  height: 4px;
+  border-start-start-radius: var(--reg-card-radius);
+  border-start-end-radius: var(--reg-card-radius);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.95) 35%,
+    rgba(196, 181, 253, 0.9) 65%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  z-index: 3;
+  pointer-events: none;
+}
+
+html[dir='rtl'] .regCardAccent {
+  background: linear-gradient(
+    270deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.95) 35%,
+    rgba(196, 181, 253, 0.9) 65%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+}
+
+.regCardInner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+  padding-block: var(--reg-card-pad-y);
+  padding-inline: var(--reg-card-pad-x);
+  gap: 0;
+}
+
+.regCardHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--reg-card-gap-tight);
+  margin-block-end: var(--reg-card-gap-section);
+  width: 100%;
+}
+
+.regCardTag {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
 }
 
 /* طبقة داكنة فوق صورة الخلفية لقراءة النص */
@@ -800,12 +908,16 @@ html[dir='rtl'] .heroTitleAccent,
   z-index: 0;
 }
 
-.heroCardWrap:hover .regCard {
-  transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.32);
+.heroCardWrap:hover .regCard,
+.regCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.42);
   box-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.22),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.16),
+    0 28px 56px -10px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .regCardIcon {
@@ -814,14 +926,12 @@ html[dir='rtl'] .heroTitleAccent,
   justify-content: center;
   width: 3.25rem;
   height: 3.25rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.18);
+  flex-shrink: 0;
+  border-radius: var(--reg-card-radius-inner);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.08) 100%);
   color: #fff;
-  margin-block-end: var(--space-4);
-  position: relative;
-  z-index: 1;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .regCardIcon svg {
@@ -831,14 +941,16 @@ html[dir='rtl'] .heroTitleAccent,
 
 .regCardTitle {
   font-family: var(--font-display);
-  font-size: var(--text-lg);
+  font-size: clamp(1.25rem, 2vw + 0.5rem, 1.5rem);
   font-weight: 800;
-  margin: 0 0 var(--space-2);
+  margin: 0 0 var(--reg-card-gap-text);
   color: #fff;
   letter-spacing: -0.02em;
-  line-height: 1.35;
+  line-height: 1.45;
   position: relative;
   z-index: 1;
+  max-width: 28ch;
+  padding-inline: 0.25rem;
 }
 
 [lang='ar'] .regCardTitle {
@@ -849,7 +961,7 @@ html[dir='rtl'] .heroTitleAccent,
 .hero[dir='ltr'] .regCardDesc,
 html[dir='ltr'] .hero .regCardTitle,
 html[dir='ltr'] .hero .regCardDesc {
-  text-align: left;
+  text-align: center;
 }
 
 html.dir-rtl .hero .regCardIcon,
@@ -863,32 +975,44 @@ html.dir-rtl .hero .regCardDesc,
 html[dir='rtl'] .hero .regCardTitle,
 html[dir='rtl'] .hero .regCardDesc {
   direction: rtl !important;
-  text-align: right !important;
+  text-align: center !important;
 }
 
 .regCardDesc {
   font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
-  margin: 0 0 var(--space-5);
-  flex: 1;
+  font-size: clamp(0.9375rem, 1.5vw + 0.25rem, 1.0625rem);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0 0 var(--reg-card-gap-cta);
+  flex: 0 1 auto;
   position: relative;
   z-index: 1;
+  max-width: 36ch;
+  padding-inline: 0.25rem;
 }
 
 .regCardButton {
   width: 100%;
-  border-radius: var(--radius-lg);
-  padding-inline: var(--space-5);
-  padding-block: var(--space-4) var(--space-4);
+  max-width: 17.5rem;
+  margin-block-start: 0;
+  margin-inline: auto;
+  border-radius: var(--radius-full);
+  padding-block: 0.5rem;
+  padding-inline-start: var(--space-5);
+  padding-inline-end: 0.5rem;
+  min-height: 3.125rem;
   font-weight: 700;
   font-size: var(--text-base, 1rem);
   background: #fff;
   color: var(--color-primary-dark);
   border: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  transition: transform var(--transition-fast), box-shadow var(--transition-normal);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.14);
+  transition:
+    transform 0.25s var(--hero-ease-out),
+    box-shadow 0.25s ease,
+    background 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -897,23 +1021,28 @@ html[dir='rtl'] .hero .regCardDesc {
   cursor: pointer;
 }
 
-.hero[dir='ltr'] .regCardButton,
-html[dir='ltr'] .hero .regCardButton {
-  flex-direction: row;
+.regCardButtonText {
+  flex: 0 1 auto;
+  min-width: 0;
+  text-align: center;
 }
 
-/* RTL: row + flex-start so text and arrow sit on the right; arrow scaleX(-1) points left */
 html.dir-rtl .hero .regCardButton,
 .regCard[dir='rtl'] .regCardButton,
 .hero[dir='rtl'] .regCardButton,
 html[dir='rtl'] .hero .regCardButton {
   flex-direction: row !important;
-  justify-content: flex-start !important;
 }
 
 .regCardButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+.regCardButton:active {
+  transform: translateY(0);
 }
 
 /* ألوان الزر حسب حالة الطلب */
@@ -948,25 +1077,47 @@ html[dir='rtl'] .hero .regCardButton {
 }
 
 .regCardArrow {
-  transition: transform var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-primary-dark, #3b1a4a);
+  color: #fff;
+  transition: transform 0.25s var(--hero-ease-out), background 0.2s ease;
 }
 
-html.dir-rtl .hero .regCardArrow,
-.regCard[dir='rtl'] .regCardArrow,
-.hero[dir='rtl'] .regCardArrow,
-html[dir='rtl'] .hero .regCardArrow {
+.regCardArrow svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+html.dir-rtl .hero .regCardArrow svg,
+.regCard[dir='rtl'] .regCardArrow svg,
+.hero[dir='rtl'] .regCardArrow svg,
+html[dir='rtl'] .hero .regCardArrow svg {
   transform: scaleX(-1);
 }
 
 .regCardButton:hover .regCardArrow {
-  transform: translateX(4px);
+  transform: scale(1.05);
 }
 
 html.dir-rtl .hero .regCardButton:hover .regCardArrow,
 .regCard[dir='rtl'] .regCardButton:hover .regCardArrow,
 .hero[dir='rtl'] .regCardButton:hover .regCardArrow,
 html[dir='rtl'] .hero .regCardButton:hover .regCardArrow {
-  transform: scaleX(-1) translateX(-4px);
+  transform: scale(1.05);
+}
+
+/* أزرار الحالة — السهم يبقى أبيض على خلفية ملونة */
+.regCardButtonStatusPending .regCardArrow,
+.regCardButtonStatusApproved .regCardArrow,
+.regCardButtonStatusRejected .regCardArrow {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
 }
 
 .regCardSecondaryLink {
