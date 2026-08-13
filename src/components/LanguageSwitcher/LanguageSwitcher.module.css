@@ -1,7 +1,7 @@
 .wrapper {
   display: inline-flex;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-full);
   overflow: hidden;
 }
 
@@ -13,7 +13,7 @@
   border: none;
   color: var(--color-text-muted);
   transition: background var(--transition-fast), color var(--transition-fast);
-  min-height: 44px;
+  min-height: 2.5rem;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -25,4 +25,28 @@
 .btn.active {
   background: var(--gradient-dominant);
   color: var(--color-text-inverse);
+}
+
+/* On dark/hero surfaces */
+.wrapperOnDark {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.wrapperOnDark .btn {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  min-height: 2.25rem;
+}
+
+.wrapperOnDark .btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.wrapperOnDark .btn.active {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-primary-dark);
 }

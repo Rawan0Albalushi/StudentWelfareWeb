@@ -225,28 +225,20 @@ export function Home() {
       <section className={`${styles.hero} js-hero`} aria-label="Hero" dir={isRtl ? 'rtl' : 'ltr'} lang={i18n.language || 'ar'}>
         <div className={styles.heroBg} />
         <div className={styles.heroShine} aria-hidden="true" />
-        <div className={styles.heroBgIcons} aria-hidden="true">
-          <span className={styles.heroBgIcon} data-icon="heart">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" /></svg>
-          </span>
-          <span className={styles.heroBgIcon} data-icon="graduation">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" /></svg>
-          </span>
-        </div>
         <div className={styles.heroShapes} aria-hidden="true">
           <span className={styles.heroShape} data-shape="1" />
           <span className={styles.heroShape} data-shape="2" />
+          <span className={styles.heroShape} data-shape="3" />
         </div>
         <div className={styles.heroNoise} aria-hidden="true" />
         <div className={styles.heroCurve} aria-hidden="true" />
         <Container size="wide" className={`${styles.heroContainer} js-hero-container`}>
           <div className={`${styles.heroGrid} ${isRtl ? styles.heroGridRtl : ''} ${!hasBanners ? styles.heroGridNoBanners : ''} js-hero-grid`}>
-            {/* النص: شارة، عنوان، وصف */}
+            {/* النص: العلامة، العنوان، الوصف */}
             <div className={`${styles.heroBanner} js-hero-banner`} dir={isRtl ? 'rtl' : 'ltr'}>
-              <p className={`${styles.heroBadge} ${styles.heroReveal1} js-hero-badge`}>{t('app.tagline')}</p>
+              <p className={`${styles.heroEyebrow} ${styles.heroReveal1} js-hero-badge`}>{t('app.tagline')}</p>
               <h1 className={`${styles.heroTitle} ${styles.heroReveal2} js-hero-title`}>
                 <span className={styles.heroTitleLine}>{t('home.heroTitle')}</span>
-                <span className={styles.heroTitleAccent} aria-hidden="true" />
               </h1>
               <p className={`${styles.heroSubtitle} ${styles.heroReveal3} js-hero-subtitle`}>{t('home.heroSubtitle')}</p>
             </div>

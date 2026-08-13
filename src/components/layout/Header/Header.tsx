@@ -16,6 +16,7 @@ export function Header() {
   const { user, logout, isAuthenticated, loading: authLoading } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const userButtonRef = useRef<HTMLButtonElement>(null)
   const [menuPosition, setMenuPosition] = useState({ top: 0, right: 0, left: 0 })
 
@@ -57,19 +58,42 @@ export function Header() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [userMenuOpen])
 
+  useEffect(() => {
+    if (!isHome) {
+      setScrolled(false)
+      return
+    }
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isHome])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
   const isRtl = (i18n.language || '').startsWith('ar')
+  const headerClass = [
+    styles.header,
+    isHome ? styles.headerOnHero : '',
+    isHome && scrolled ? styles.headerScrolled : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
   return (
-    <header className={`${styles.header} ${isHome ? styles.headerStraight : ''}`.trim()} role="banner">
+    <header className={headerClass} role="banner">
       <div className={styles.headerInner}>
       <Container size="wide" className={styles.container}>
         <Link to="/" className={styles.logo} aria-label={t('app.name')}>
-          {t('app.name')}
+          <span className={styles.logoMark} aria-hidden="true" />
+          <span className={styles.logoText}>{t('app.name')}</span>
         </Link>
 
         <button
           type="button"
-          className={styles.menuToggle}
+          className={`${styles.menuToggle} ${menuOpen ? styles.menuToggleOpen : ''}`}
           aria-expanded={menuOpen}
           aria-controls="main-nav"
           onClick={() => setMenuOpen((o) => !o)}
@@ -100,6 +124,7 @@ export function Header() {
 
           <div className={styles.actions}>
             <LanguageSwitcher
+              tone={isHome && !menuOpen ? 'onDark' : 'default'}
               value={i18n.language}
               onChange={(lng) => {
                 setDocumentDirection(lng)
@@ -158,12 +183,12 @@ export function Header() {
               </div>
             ) : (
               <>
-                <Link to="/login" onClick={() => setMenuOpen(false)}>
+                <Link to="/login" onClick={() => setMenuOpen(false)} className={styles.authLink}>
                   <Button variant="outline" size="sm">
                     {t('nav.login')}
                   </Button>
                 </Link>
-                <Link to="/register" onClick={() => setMenuOpen(false)}>
+                <Link to="/register" onClick={() => setMenuOpen(false)} className={styles.authLinkPrimary}>
                   <Button size="sm">{t('nav.register')}</Button>
                 </Link>
               </>

@@ -37,9 +37,10 @@
   min-width: 0;
 }
 
+/* Full-bleed (e.g. home hero): content starts under the fixed header */
 .mainNoPadding {
   flex: 1;
-  padding-block-start: var(--header-height);
+  padding-block-start: 0;
 }
 
 @media (max-width: 379px) {
