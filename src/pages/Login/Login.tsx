@@ -1,13 +1,18 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { PageLayout } from '../../components/layout/PageLayout'
-import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
-import { Card, CardContent } from '../../components/ui/Card'
 import { useAuth } from '../../context/AuthContext'
 import { useErrorToast } from '../../context/ErrorContext'
 import { getApiErrorMessage } from '../../services/apiClient'
+import {
+  AuthShell,
+  AuthField,
+  AuthPasswordField,
+  AuthError,
+  PhoneIcon,
+  ArrowIcon,
+} from '../AuthShell'
 import styles from '../Auth.module.css'
 
 export function Login() {
@@ -27,7 +32,7 @@ export function Login() {
     e.preventDefault()
     setError(null)
     if (!phone.trim() || !password) {
-      setError(t('auth.phone') + ' / ' + t('auth.password') + ' required')
+      setError(t('auth.requiredFields'))
       return
     }
     try {
@@ -41,46 +46,37 @@ export function Login() {
   }
 
   return (
-    <PageLayout>
-      <Container size="narrow">
-        <div className={styles.wrapper}>
-        <h1 className={styles.title}>{t('auth.login')}</h1>
-        <Card>
-          <CardContent>
-            {error && <p className={styles.error}>{error}</p>}
-            <form className={styles.form} onSubmit={handleSubmit}>
-              <label className={styles.label}>
-                {t('auth.phone')}
-                <input
-                  type="tel"
-                  className={styles.input}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="968XXXXXXXX"
-                  disabled={loading}
-                />
-              </label>
-              <label className={styles.label}>
-                {t('auth.password')}
-                <input
-                  type="password"
-                  className={styles.input}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={loading}
-                />
-              </label>
-              <Button type="submit" fullWidth size="lg" disabled={loading}>
-                {loading ? t('common.loading') : t('auth.submitLogin')}
-              </Button>
-            </form>
-            <p className={styles.footer}>
-              {t('auth.noAccount')} <Link to="/register">{t('auth.register')}</Link>
-            </p>
-          </CardContent>
-        </Card>
-        </div>
-      </Container>
-    </PageLayout>
+    <AuthShell title={t('auth.login')} subtitle={t('auth.loginSubtitle')}>
+      <AuthError message={error} />
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <AuthField
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          inputMode="numeric"
+          label={t('auth.phone')}
+          icon={<PhoneIcon />}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={t('auth.phonePlaceholder')}
+          disabled={loading}
+        />
+        <AuthPasswordField
+          name="password"
+          autoComplete="current-password"
+          label={t('auth.password')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+        />
+        <Button type="submit" fullWidth size="lg" disabled={loading} className={styles.submitBtn}>
+          {loading ? t('common.loading') : t('auth.submitLogin')}
+          {!loading && <ArrowIcon />}
+        </Button>
+      </form>
+      <p className={styles.footer}>
+        {t('auth.noAccount')} <Link to="/register">{t('auth.register')}</Link>
+      </p>
+    </AuthShell>
   )
 }

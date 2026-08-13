@@ -1,14 +1,21 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { PageLayout } from '../../components/layout/PageLayout'
-import { Container } from '../../components/ui/Container'
 import { Button } from '../../components/ui/Button'
-import { Card, CardContent } from '../../components/ui/Card'
 import { useAuth } from '../../context/AuthContext'
 import { useErrorToast } from '../../context/ErrorContext'
 import { getApiErrorMessage } from '../../services/apiClient'
 import { authService } from '../../services/authService'
+import {
+  AuthShell,
+  AuthField,
+  AuthPasswordField,
+  AuthError,
+  UserIcon,
+  PhoneIcon,
+  MailIcon,
+  ArrowIcon,
+} from '../AuthShell'
 import styles from '../Auth.module.css'
 
 const isDev = typeof import.meta !== 'undefined' && import.meta.env?.DEV
@@ -19,7 +26,6 @@ export function Register() {
   const { showError } = useErrorToast()
   const navigate = useNavigate()
 
-  // Step 1: registration form
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
@@ -27,7 +33,6 @@ export function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  // Step 2: OTP (after register/phone)
   const [step, setStep] = useState<'form' | 'otp'>('form')
   const [verifyId, setVerifyId] = useState<string | null>(null)
   const [phoneForResend, setPhoneForResend] = useState<string>('')
@@ -41,11 +46,11 @@ export function Register() {
     e.preventDefault()
     setError(null)
     if (!name.trim() || !phone.trim() || !password) {
-      setError('Name, phone and password are required')
+      setError(t('auth.requiredFields'))
       return
     }
     if (password !== passwordConfirm) {
-      setError(t('auth.passwordConfirm') + ' mismatch')
+      setError(t('auth.passwordMismatch'))
       return
     }
     try {
@@ -120,156 +125,142 @@ export function Register() {
     }
   }
 
+  const steps = (
+    <div className={styles.steps}>
+      <span className={`${styles.step} ${step === 'form' ? styles.stepActive : ''}`}>
+        <span className={styles.stepDot}>1</span>
+        {t('auth.stepAccount')}
+      </span>
+      <span className={`${styles.stepLine} ${step === 'otp' ? styles.stepLineActive : ''}`} />
+      <span className={`${styles.step} ${step === 'otp' ? styles.stepActive : ''}`}>
+        <span className={styles.stepDot}>2</span>
+        {t('auth.stepVerify')}
+      </span>
+    </div>
+  )
+
   if (step === 'otp') {
     return (
-      <PageLayout>
-        <Container size="narrow">
-          <div className={styles.wrapper}>
-            <h1 className={styles.title}>{t('auth.register')}</h1>
-            <Card>
-              <CardContent>
-                <p className={styles.otpSent}>
-                  {t('auth.otpSent', { phone: maskedPhone || phoneForResend })}
-                </p>
-                {otpError && <p className={styles.error}>{otpError}</p>}
-                <form className={styles.form} onSubmit={handleVerifyOtp}>
-                  <label className={styles.label}>
-                    {t('auth.otpVerify')}
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      className={styles.input}
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                      placeholder="000000"
-                      disabled={loading}
-                      maxLength={6}
-                    />
-                  </label>
-                  <Button type="submit" fullWidth size="lg" disabled={loading || !otpCode.trim()}>
-                    {loading ? t('common.loading') : t('auth.verifyCode')}
-                  </Button>
-                </form>
-                <p className={styles.resendRow}>
-                  <button
-                    type="button"
-                    className={styles.resendBtn}
-                    onClick={handleResendOtp}
-                    disabled={loading || resendCooldown > 0}
-                  >
-                    {resendCooldown > 0
-                      ? `${t('auth.resendOtp')} (${resendCooldown}s)`
-                      : t('auth.resendOtp')}
-                  </button>
-                </p>
-                {isDev && (
-                  <p className={styles.devOtpRow}>
-                    <button
-                      type="button"
-                      className={styles.devOtpBtn}
-                      onClick={handleGetDevOtp}
-                      disabled={loading}
-                    >
-                      {t('auth.devOtp')}
-                    </button>
-                    {devOtp !== null && devOtp !== '' && (
-                      <span className={styles.devOtpCode}> {devOtp}</span>
-                    )}
-                  </p>
-                )}
-                <p className={styles.footer}>
-                  <button
-                    type="button"
-                    className={styles.backLink}
-                    onClick={() => {
-                      setStep('form')
-                      setVerifyId(null)
-                      setOtpError(null)
-                    }}
-                  >
-                    ← {t('common.back')}
-                  </button>
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </Container>
-      </PageLayout>
+      <AuthShell title={t('auth.otpVerify')} subtitle={t('auth.otpSubtitle')}>
+        {steps}
+        <p className={styles.otpSent}>{t('auth.otpSent', { phone: maskedPhone || phoneForResend })}</p>
+        <AuthError message={otpError} />
+        <form className={styles.form} onSubmit={handleVerifyOtp}>
+          <AuthField
+            name="otp"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            label={t('auth.otpVerify')}
+            value={otpCode}
+            onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            placeholder="000000"
+            disabled={loading}
+            maxLength={6}
+            className={styles.otpInput}
+          />
+          <Button type="submit" fullWidth size="lg" disabled={loading || !otpCode.trim()} className={styles.submitBtn}>
+            {loading ? t('common.loading') : t('auth.verifyCode')}
+            {!loading && <ArrowIcon />}
+          </Button>
+        </form>
+        <p className={styles.resendRow}>
+          <button
+            type="button"
+            className={styles.resendBtn}
+            onClick={handleResendOtp}
+            disabled={loading || resendCooldown > 0}
+          >
+            {resendCooldown > 0 ? `${t('auth.resendOtp')} (${resendCooldown}s)` : t('auth.resendOtp')}
+          </button>
+        </p>
+        {isDev && (
+          <p className={styles.devOtpRow}>
+            <button type="button" className={styles.devOtpBtn} onClick={handleGetDevOtp} disabled={loading}>
+              {t('auth.devOtp')}
+            </button>
+            {devOtp !== null && devOtp !== '' && <span className={styles.devOtpCode}>{devOtp}</span>}
+          </p>
+        )}
+        <p className={styles.backRow}>
+          <button
+            type="button"
+            className={styles.backLink}
+            onClick={() => {
+              setStep('form')
+              setVerifyId(null)
+              setOtpError(null)
+            }}
+          >
+            {t('common.back')}
+          </button>
+        </p>
+      </AuthShell>
     )
   }
 
   return (
-    <PageLayout>
-      <Container size="narrow">
-        <div className={styles.wrapper}>
-          <h1 className={styles.title}>{t('auth.register')}</h1>
-          <Card>
-            <CardContent>
-              {error && <p className={styles.error}>{error}</p>}
-              <form className={styles.form} onSubmit={handleSubmitForm}>
-                <label className={styles.label}>
-                  {t('auth.name')}
-                  <input
-                    type="text"
-                    className={styles.input}
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    disabled={loading}
-                  />
-                </label>
-                <label className={styles.label}>
-                  {t('auth.phone')}
-                  <input
-                    type="tel"
-                    className={styles.input}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="968XXXXXXXX"
-                    disabled={loading}
-                  />
-                </label>
-                <label className={styles.label}>
-                  {t('auth.email')}
-                  <input
-                    type="email"
-                    className={styles.input}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
-                  />
-                </label>
-                <label className={styles.label}>
-                  {t('auth.password')}
-                  <input
-                    type="password"
-                    className={styles.input}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                  />
-                </label>
-                <label className={styles.label}>
-                  {t('auth.passwordConfirm')}
-                  <input
-                    type="password"
-                    className={styles.input}
-                    value={passwordConfirm}
-                    onChange={(e) => setPasswordConfirm(e.target.value)}
-                    disabled={loading}
-                  />
-                </label>
-                <Button type="submit" fullWidth size="lg" disabled={loading}>
-                  {loading ? t('common.loading') : t('auth.submitRegister')}
-                </Button>
-              </form>
-              <p className={styles.footer}>
-                {t('auth.hasAccount')} <Link to="/login">{t('auth.login')}</Link>
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </Container>
-    </PageLayout>
+    <AuthShell title={t('auth.register')} subtitle={t('auth.registerSubtitle')}>
+      {steps}
+      <AuthError message={error} />
+      <form className={styles.form} onSubmit={handleSubmitForm}>
+        <AuthField
+          name="name"
+          type="text"
+          autoComplete="name"
+          label={t('auth.name')}
+          icon={<UserIcon />}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={loading}
+        />
+        <AuthField
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          inputMode="numeric"
+          label={t('auth.phone')}
+          icon={<PhoneIcon />}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={t('auth.phonePlaceholder')}
+          disabled={loading}
+        />
+        <AuthField
+          name="email"
+          type="email"
+          autoComplete="email"
+          label={t('auth.email')}
+          hint={`(${t('auth.emailOptional')})`}
+          icon={<MailIcon />}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={loading}
+        />
+        <AuthPasswordField
+          name="password"
+          autoComplete="new-password"
+          label={t('auth.password')}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+        />
+        <AuthPasswordField
+          name="passwordConfirm"
+          autoComplete="new-password"
+          label={t('auth.passwordConfirm')}
+          value={passwordConfirm}
+          onChange={(e) => setPasswordConfirm(e.target.value)}
+          disabled={loading}
+        />
+        <Button type="submit" fullWidth size="lg" disabled={loading} className={styles.submitBtn}>
+          {loading ? t('common.loading') : t('auth.submitRegister')}
+          {!loading && <ArrowIcon />}
+        </Button>
+      </form>
+      <p className={styles.footer}>
+        {t('auth.hasAccount')} <Link to="/login">{t('auth.login')}</Link>
+      </p>
+    </AuthShell>
   )
 }
