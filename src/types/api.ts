@@ -42,12 +42,30 @@ export type ClientSource = 'web' | 'app'
 
 export interface RecentDonation {
   id?: number
+  donation_id?: number
   amount?: number
   donor_name?: string
+  donor_email?: string
+  donor_phone?: string
   campaign_id?: number
   program_id?: number
+  campaign?: CampaignOrProgram | Record<string, unknown>
+  program?: CampaignOrProgram | Record<string, unknown>
+  item?: CampaignOrProgram | Record<string, unknown>
+  campaign_title?: string
+  campaign_name?: string
+  program_title?: string
+  program_name?: string
   created_at?: string
+  paid_at?: string
+  updated_at?: string
   source?: ClientSource
+  status?: string
+  payment_status?: string
+  donation_status?: string
+  is_anonymous?: boolean | number
+  note?: string
+  message?: string
   [key: string]: unknown
 }
 

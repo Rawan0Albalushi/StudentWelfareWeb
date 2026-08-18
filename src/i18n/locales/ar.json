@@ -92,8 +92,7 @@
     "ctaDonate": "تبرع الآن",
     "donationDate": "التاريخ",
     "amount": "المبلغ",
-    "sourceWeb": "ويب",
-    "sourceApp": "تطبيق"
+    "campaign": "المبادرة"
   },
   "news": {
     "subtitle": "آخر أخبار وأنشطة صندوق رعاية الطالب الجامعي",

@@ -6,15 +6,26 @@ import { Container } from '../../components/ui/Container'
 import { Card, CardContent } from '../../components/ui/Card'
 import { Button } from '../../components/ui/Button'
 import { donationService } from '../../services/donationService'
-import type { RecentDonation } from '../../types/api'
+import { campaignService } from '../../services/campaignService'
+import type { CampaignOrProgram, RecentDonation } from '../../types/api'
 import styles from './MyDonations.module.css'
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value != null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function toNumber(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string' && value.trim() && Number.isFinite(Number(value))) return Number(value)
+  return undefined
+}
 
 function formatDate(iso?: string, locale: string = 'ar'): string {
   if (!iso) return '—'
   try {
     const d = new Date(iso)
     if (Number.isNaN(d.getTime())) return iso
-    return d.toLocaleDateString(locale === 'ar' ? 'ar-OM' : 'en-GB', {
+    return d.toLocaleDateString(locale.startsWith('ar') ? 'ar-OM' : 'en-GB', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -29,17 +40,58 @@ function formatAmount(amount?: number): string {
   return Number(amount).toLocaleString('en', { minimumFractionDigits: 0, maximumFractionDigits: 2 })
 }
 
+function pickTitle(obj: Record<string, unknown> | undefined, lang: string): string | undefined {
+  if (!obj) return undefined
+  const ar = typeof obj.title_ar === 'string' ? obj.title_ar : undefined
+  const en = typeof obj.title_en === 'string' ? obj.title_en : undefined
+  const title = typeof obj.title === 'string' ? obj.title : typeof obj.name === 'string' ? obj.name : undefined
+  return ((lang === 'ar' ? ar || title || en : en || title || ar) || '').trim() || undefined
+}
+
+function getTargetTitle(
+  donation: RecentDonation,
+  lang: string,
+  campaigns: CampaignOrProgram[],
+  programs: CampaignOrProgram[],
+): string | undefined {
+  const nested =
+    pickTitle(isRecord(donation.campaign) ? donation.campaign : undefined, lang) ||
+    pickTitle(isRecord(donation.program) ? donation.program : undefined, lang) ||
+    pickTitle(isRecord(donation.item) ? donation.item : undefined, lang) ||
+    (typeof donation.campaign_title === 'string' ? donation.campaign_title : undefined) ||
+    (typeof donation.program_title === 'string' ? donation.program_title : undefined)
+  if (nested) return nested
+
+  const campaignId = toNumber(donation.campaign_id)
+  const programId = toNumber(donation.program_id)
+  const item = campaignId != null
+    ? campaigns.find((c) => c.id === campaignId)
+    : programId != null
+      ? programs.find((p) => p.id === programId)
+      : undefined
+  if (!item) return undefined
+  return (lang === 'ar' ? item.title_ar || item.title || item.title_en : item.title_en || item.title || item.title_ar) || undefined
+}
+
 export function MyDonations() {
   const { t, i18n } = useTranslation('common')
   const [list, setList] = useState<RecentDonation[]>([])
+  const [campaigns, setCampaigns] = useState<CampaignOrProgram[]>([])
+  const [programs, setPrograms] = useState<CampaignOrProgram[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     let cancelled = false
-    donationService
-      .getMyDonations()
-      .then((data) => {
-        if (!cancelled) setList(data)
+    Promise.all([
+      donationService.getMyDonations({ limit: 100 }),
+      campaignService.getCampaigns({ limit: 100, per_page: 100 }).catch(() => [] as CampaignOrProgram[]),
+      campaignService.getPrograms().catch(() => [] as CampaignOrProgram[]),
+    ])
+      .then(([data, campList, progList]) => {
+        if (cancelled) return
+        setList(data)
+        setCampaigns(campList)
+        setPrograms(progList)
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -49,6 +101,7 @@ export function MyDonations() {
 
   const total = list.reduce((sum, d) => sum + (Number((d as RecentDonation).amount) || 0), 0)
   const locale = i18n.language || 'ar'
+  const lang = locale.startsWith('ar') ? 'ar' : 'en'
 
   return (
     <PageLayout>
@@ -63,11 +116,7 @@ export function MyDonations() {
         {loading ? (
           <div className={styles.loadingWrap}>
             <div className={styles.skeletonSummary} />
-            <div className={styles.skeletonList}>
-              {[1, 2, 3].map((i) => (
-                <div key={i} className={styles.skeletonCard} />
-              ))}
-            </div>
+            <div className={styles.skeletonTable} />
           </div>
         ) : list.length === 0 ? (
           <div className={styles.empty}>
@@ -109,36 +158,37 @@ export function MyDonations() {
               <h2 id="donations-list-title" className={styles.listSectionTitle}>
                 {t('myDonations.donationsListTitle')}
               </h2>
-              <ul className={styles.list} role="list">
-                {list.map((d, i) => {
-                  const donation = d as RecentDonation
-                  const sourceKey = donation.source === 'app' ? 'sourceApp' : 'sourceWeb'
-                  return (
-                    <li key={donation.id ?? i} className={styles.listItem}>
-                      <Card className={styles.donationCard}>
-                        <CardContent className={styles.donationCardContent}>
-                          <div className={styles.donationIcon} aria-hidden>
-                            ♥
-                          </div>
-                          <div className={styles.donationBody}>
-                            <div className={styles.donationRow}>
-                              <span className={styles.donationAmount}>
-                                {formatAmount(donation.amount)} {t('donate.currencyShort')}
-                              </span>
-                              {donation.source != null && (
-                                <span className={styles.donationSource}>{t(`myDonations.${sourceKey}`)}</span>
-                              )}
-                            </div>
-                            <div className={styles.donationMeta}>
-                              {t('myDonations.donationDate')}: {formatDate(donation.created_at, locale)}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </li>
-                  )
-                })}
-              </ul>
+              <div className={styles.tableWrap}>
+                <table className={styles.table}>
+                  <thead>
+                    <tr>
+                      <th scope="col">{t('myDonations.campaign')}</th>
+                      <th scope="col">{t('myDonations.donationDate')}</th>
+                      <th scope="col" className={styles.amountCol}>{t('myDonations.amount')}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {list.map((d, i) => {
+                      const donation = d as RecentDonation
+                      const title = getTargetTitle(donation, lang, campaigns, programs)
+
+                      return (
+                        <tr key={donation.id ?? i}>
+                          <td data-label={t('myDonations.campaign')} className={styles.campaignCell}>
+                            {title || '—'}
+                          </td>
+                          <td data-label={t('myDonations.donationDate')}>
+                            {formatDate(donation.created_at, locale)}
+                          </td>
+                          <td data-label={t('myDonations.amount')} className={styles.amountCell}>
+                            {formatAmount(donation.amount)} {t('donate.currencyShort')}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </section>
           </>
         )}

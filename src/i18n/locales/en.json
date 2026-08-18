@@ -92,8 +92,7 @@
     "ctaDonate": "Donate now",
     "donationDate": "Date",
     "amount": "Amount",
-    "sourceWeb": "Web",
-    "sourceApp": "App"
+    "campaign": "Campaign"
   },
   "news": {
     "subtitle": "Latest news and updates from the Student Welfare Fund",
