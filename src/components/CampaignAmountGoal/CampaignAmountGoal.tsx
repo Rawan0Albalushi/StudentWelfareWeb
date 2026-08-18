@@ -13,18 +13,23 @@ function formatAmount(amount?: number): string {
   })
 }
 
-function IconWallet() {
+function IconCoins() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="8" cy="8" r="6" />
+      <path d="M18.09 10.37A6 6 0 1 1 10.34 18" />
+      <path d="M7 6h1v4" />
+      <path d="m16.71 13.88.7.71-2.82 2.82" />
     </svg>
   )
 }
 
-function IconFlag() {
+function IconTarget() {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6h-5.6z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
     </svg>
   )
 }
@@ -57,7 +62,7 @@ export function CampaignAmountGoal({
         <div className={styles.col}>
           <div className={styles.colHeader}>
             <span className={`${styles.icon} ${styles.iconRaised}`}>
-              <IconWallet />
+              <IconCoins />
             </span>
             <span className={`${styles.label} ${styles.labelRaised}`}>{t('campaigns.raised')}</span>
           </div>
@@ -68,7 +73,7 @@ export function CampaignAmountGoal({
         <div className={styles.col}>
           <div className={styles.colHeader}>
             <span className={`${styles.icon} ${styles.iconGoal}`}>
-              <IconFlag />
+              <IconTarget />
             </span>
             <span className={`${styles.label} ${styles.labelGoal}`}>{t('campaigns.goal')}</span>
           </div>

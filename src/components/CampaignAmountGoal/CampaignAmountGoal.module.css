@@ -26,24 +26,27 @@
 
 .icon {
   flex-shrink: 0;
-  width: 1.125rem;
-  height: 1.125rem;
+  width: 1.625rem;
+  height: 1.625rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  border-radius: var(--radius-full);
 }
 
 .icon svg {
-  width: 100%;
-  height: 100%;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .iconRaised {
-  color: var(--campaign-raised-blue, #1a4d7a);
+  color: var(--color-secondary-dark);
+  background: rgba(45, 170, 226, 0.14);
 }
 
 .iconGoal {
-  color: var(--color-text-muted);
+  color: var(--color-primary);
+  background: var(--color-primary-tint);
 }
 
 .label {
