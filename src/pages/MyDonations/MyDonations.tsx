@@ -102,6 +102,15 @@ export function MyDonations() {
   const total = list.reduce((sum, d) => sum + (Number((d as RecentDonation).amount) || 0), 0)
   const locale = i18n.language || 'ar'
   const lang = locale.startsWith('ar') ? 'ar' : 'en'
+  const rows = list.map((d, i) => {
+    const donation = d as RecentDonation
+    return {
+      key: donation.id ?? i,
+      title: getTargetTitle(donation, lang, campaigns, programs) || '—',
+      date: formatDate(donation.created_at, locale),
+      amount: formatAmount(donation.amount),
+    }
+  })
 
   return (
     <PageLayout>
@@ -125,8 +134,8 @@ export function MyDonations() {
             </div>
             <h2 className={styles.emptyTitle}>{t('myDonations.emptyTitle')}</h2>
             <p className={styles.emptyDescription}>{t('myDonations.emptyDescription')}</p>
-            <Link to="/campaigns">
-              <Button size="lg" className={styles.emptyCta}>
+            <Link to="/campaigns" className={styles.emptyCtaLink}>
+              <Button size="lg" fullWidth className={styles.emptyCta}>
                 {t('myDonations.ctaDonate')}
               </Button>
             </Link>
@@ -135,7 +144,7 @@ export function MyDonations() {
           <>
             <section className={styles.summarySection} aria-labelledby="my-donations-summary">
               <div className={styles.summaryGrid}>
-                <Card className={styles.summaryCard}>
+                <Card padding="none" className={styles.summaryCard}>
                   <CardContent className={styles.summaryContent}>
                     <span className={styles.summaryLabel} id="my-donations-summary">
                       {t('myDonations.totalDonated')}
@@ -145,7 +154,7 @@ export function MyDonations() {
                     </span>
                   </CardContent>
                 </Card>
-                <Card className={styles.summaryCard}>
+                <Card padding="none" className={styles.summaryCard}>
                   <CardContent className={styles.summaryContent}>
                     <span className={styles.summaryLabel}>{t('myDonations.donationCount')}</span>
                     <span className={styles.summaryCount}>{list.length}</span>
@@ -168,27 +177,32 @@ export function MyDonations() {
                     </tr>
                   </thead>
                   <tbody>
-                    {list.map((d, i) => {
-                      const donation = d as RecentDonation
-                      const title = getTargetTitle(donation, lang, campaigns, programs)
-
-                      return (
-                        <tr key={donation.id ?? i}>
-                          <td data-label={t('myDonations.campaign')} className={styles.campaignCell}>
-                            {title || '—'}
-                          </td>
-                          <td data-label={t('myDonations.donationDate')}>
-                            {formatDate(donation.created_at, locale)}
-                          </td>
-                          <td data-label={t('myDonations.amount')} className={styles.amountCell}>
-                            {formatAmount(donation.amount)} {t('donate.currencyShort')}
-                          </td>
-                        </tr>
-                      )
-                    })}
+                    {rows.map((row) => (
+                      <tr key={row.key}>
+                        <td className={styles.campaignCell}>{row.title}</td>
+                        <td>{row.date}</td>
+                        <td className={styles.amountCell}>
+                          {row.amount} {t('donate.currencyShort')}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
+
+              <ul className={styles.cardList}>
+                {rows.map((row) => (
+                  <li key={row.key} className={styles.donationCard}>
+                    <p className={styles.donationCardTitle}>{row.title}</p>
+                    <div className={styles.donationCardMeta}>
+                      <span className={styles.donationCardDate}>{row.date}</span>
+                      <span className={styles.donationCardAmount}>
+                        {row.amount} {t('donate.currencyShort')}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </section>
           </>
         )}
